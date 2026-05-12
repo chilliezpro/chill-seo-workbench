@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visual Content Studio — SSP Content Engine</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --surface-2: #21253a;
+      --border: #2a2d3a; --accent: #6c63ff; --accent-hover: #857dff;
+      --text-primary: #f0f0f5; --text-secondary: #8b8fa8;
+      --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
+      --radius: 10px; --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    body { padding-bottom: 60px; }
+
+    .mode-tabs-large {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .mode-tab-large {
+      flex: 1;
+      text-align: center;
+      padding: 14px 10px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 0.18s ease, border-color 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .mode-tab-large.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .mode-tab-large:hover {
+      color: var(--text-primary);
+    }
+
+    .concept-output {
+      margin-bottom: 16px;
+    }
+
+    .concept-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .mode-tab-large { font-size: 12px; padding: 12px 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div>
+          <a href="index.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            SSP Content Engine
+          </a>
+          <div class="page-title" style="margin-top:6px;">Visual Content Studio</div>
+          <div class="page-subtitle">Three modes: generate visuals and captions from scratch, create a graphic brief from existing copy, or build a full GBP post pack with link wheeling — up to 5 daily posts, each with a matching graphic brief.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Warning -->
+    <div class="api-warning" id="apiWarning" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      No Groq API key found. <a href="index.html" style="color:var(--danger); text-decoration:underline;">Add your key in the portal</a> before generating.
+    </div>
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs-large">
+      <button class="mode-tab-large active" data-mode="1">Mode 1 — Generate from Page</button>
+      <button class="mode-tab-large" data-mode="2">Mode 2 — Brief from Caption</button>
+      <button class="mode-tab-large" data-mode="3">Mode 3 — GBP Post Pack</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- MODE 1 — Generate from Page                   -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="mode1">
+      <!-- Source Input -->
+      <div class="card source-block" style="margin-bottom:16px;">
+        <div class="section-heading">Content Source</div>
+        <div class="source-row">
+          <input type="url" id="m1Url" class="input-field" placeholder="https://client-website.com/service-page" />
+          <button class="btn-ghost" id="m1FetchBtn">
+            <span class="spinner" id="m1FetchSpinner" style="display:none;"></span>
+            Fetch Page
+          </button>
+        </div>
+        <div class="source-status" id="m1SourceStatus">Enter a URL or paste content below.</div>
+        <button class="source-toggle" id="m1PasteToggle">Or paste content manually ▾</button>
+        <div id="m1PasteArea" style="display:none; margin-top:10px;">
+          <textarea id="m1ManualContent" class="textarea-field" rows="5" placeholder="Paste page content here..."></textarea>
+        </div>
+        <div class="two-col" style="margin-top:14px;">
+          <div class="field-group">
+            <label class="field-label" for="m1BizType">Business Type</label>
+            <select id="m1BizType" class="select-field">
+              <option value="Auto-detect">Auto-detect</option>
+              <option value="Law Firm">Law Firm</option>
+              <option value="Home Services">Home Services</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m1Tone">Tone</label>
+            <select id="m1Tone" class="select-field">
+              <option value="Auto-detect">Auto-detect</option>
+              <option value="Professional">Professional</option>
+              <option value="Friendly">Friendly</option>
+              <option value="Urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="section-heading">Visual Preferences</div>
+        <div class="pref-content" style="padding-top:0;">
+          <div class="field-group">
+            <label class="field-label" for="m1Concepts">Number of Concepts</label>
+            <select id="m1Concepts" class="select-field">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m1Format">Format</label>
+            <select id="m1Format" class="select-field">
+              <option value="Square 1:1" selected>Square 1:1</option>
+              <option value="Portrait 4:5">Portrait 4:5</option>
+              <option value="Story 9:16">Story 9:16</option>
+              <option value="Landscape 16:9">Landscape 16:9</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m1Style">Style</label>
+            <select id="m1Style" class="select-field">
+              <option value="Clean minimal" selected>Clean minimal</option>
+              <option value="Bold text-heavy">Bold text-heavy</option>
+              <option value="Photo-realistic">Photo-realistic</option>
+              <option value="Illustrated">Illustrated</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m1Caption">Include Caption with Visual</label>
+            <select id="m1Caption" class="select-field">
+              <option value="Yes" selected>Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field-group" id="m1PlatformGroup">
+            <label class="field-label" for="m1Platform">Platform (for caption)</label>
+            <select id="m1Platform" class="select-field">
+              <option value="Instagram">Instagram</option>
+              <option value="Facebook">Facebook</option>
+              <option value="LinkedIn">LinkedIn</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <button class="btn-primary" id="m1GenerateBtn">
+            <span class="spinner" id="m1GenSpinner" style="display:none;"></span>
+            Generate Visual Package
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode 1 Output -->
+      <div id="m1Output"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- MODE 2 — Brief from Existing Caption          -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="mode2" style="display:none;">
+      <div class="card" style="margin-bottom:16px;">
+        <div class="section-heading">Existing Caption</div>
+        <div class="field-group">
+          <label class="field-label" for="m2Caption">Paste Existing Caption</label>
+          <textarea id="m2Caption" class="textarea-field" rows="6" placeholder="Paste the caption that's already been written. The graphic brief will match it exactly."></textarea>
+        </div>
+
+        <div class="section-heading" style="margin-top:8px;">Brief Preferences</div>
+        <div class="pref-content" style="padding-top:0;">
+          <div class="field-group">
+            <label class="field-label" for="m2BizType">Business Type</label>
+            <select id="m2BizType" class="select-field">
+              <option value="Auto-detect">Auto-detect</option>
+              <option value="Law Firm">Law Firm</option>
+              <option value="Home Services">Home Services</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m2Format">Format</label>
+            <select id="m2Format" class="select-field">
+              <option value="Square 1:1" selected>Square 1:1</option>
+              <option value="Portrait 4:5">Portrait 4:5</option>
+              <option value="Story 9:16">Story 9:16</option>
+              <option value="Landscape 16:9">Landscape 16:9</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m2Style">Style</label>
+            <select id="m2Style" class="select-field">
+              <option value="Clean minimal" selected>Clean minimal</option>
+              <option value="Bold text-heavy">Bold text-heavy</option>
+              <option value="Photo-realistic">Photo-realistic</option>
+              <option value="Illustrated">Illustrated</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m2Concepts">Number of Concepts</label>
+            <select id="m2Concepts" class="select-field">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <button class="btn-primary" id="m2GenerateBtn">
+            <span class="spinner" id="m2GenSpinner" style="display:none;"></span>
+            Generate Graphic Brief
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode 2 Output -->
+      <div id="m2Output"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- MODE 3 — GBP Post Pack with Link Wheeling     -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="mode3" style="display:none;">
+      <!-- Hub Page Source -->
+      <div class="card source-block" style="margin-bottom:16px;">
+        <div class="section-heading">Hub Page (Center of the Wheel)</div>
+        <div class="source-row">
+          <input type="url" id="m3HubUrl" class="input-field" placeholder="https://client-website.com or GBP URL" />
+          <button class="btn-ghost" id="m3FetchBtn">
+            <span class="spinner" id="m3FetchSpinner" style="display:none;"></span>
+            Fetch Hub Page
+          </button>
+        </div>
+        <div class="source-status" id="m3SourceStatus">Enter the hub page URL to fetch content.</div>
+
+        <div class="two-col" style="margin-top:14px;">
+          <div class="field-group">
+            <label class="field-label" for="m3BizType">Business Type</label>
+            <select id="m3BizType" class="select-field">
+              <option value="Auto-detect">Auto-detect</option>
+              <option value="Law Firm">Law Firm</option>
+              <option value="Home Services">Home Services</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m3Tone">Tone</label>
+            <select id="m3Tone" class="select-field">
+              <option value="Auto-detect">Auto-detect</option>
+              <option value="Professional">Professional</option>
+              <option value="Friendly">Friendly</option>
+              <option value="Urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Posts & Spokes -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="section-heading">Post Pack Setup</div>
+        <div class="field-group">
+          <label class="field-label" for="m3PostCount">Number of Posts</label>
+          <select id="m3PostCount" class="select-field" style="max-width:200px;">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <div id="m3SpokeFields" style="margin-top:8px;"></div>
+
+        <div class="section-heading" style="margin-top:16px;">Post Preferences</div>
+        <div class="pref-content" style="padding-top:0;">
+          <div class="field-group">
+            <label class="field-label" for="m3PostLength">Post Length</label>
+            <select id="m3PostLength" class="select-field">
+              <option value="Short (100-150 words)">Short (100–150 words)</option>
+              <option value="Standard (150-250 words)" selected>Standard (150–250 words)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m3Cta">CTA Type</label>
+            <select id="m3Cta" class="select-field">
+              <option value="Call now">Call now</option>
+              <option value="Visit website">Visit website</option>
+              <option value="Book free estimate" selected>Book free estimate</option>
+              <option value="Get directions">Get directions</option>
+              <option value="Learn more">Learn more</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m3Graphic">Include Graphic Brief per Post</label>
+            <select id="m3Graphic" class="select-field">
+              <option value="Yes" selected>Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m3GraphicFormat">Graphic Format</label>
+            <select id="m3GraphicFormat" class="select-field">
+              <option value="Square 1:1" selected>Square 1:1</option>
+              <option value="Portrait 4:5">Portrait 4:5</option>
+              <option value="Story 9:16">Story 9:16</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="m3GraphicStyle">Graphic Style</label>
+            <select id="m3GraphicStyle" class="select-field">
+              <option value="Clean minimal" selected>Clean minimal</option>
+              <option value="Bold text-heavy">Bold text-heavy</option>
+              <option value="Photo-realistic">Photo-realistic</option>
+              <option value="Illustrated">Illustrated</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <button class="btn-primary" id="m3GenerateBtn">
+            <span class="spinner" id="m3GenSpinner" style="display:none;"></span>
+            Generate GBP Post Pack
+          </button>
+          <div class="progress-msg" id="m3Progress"></div>
+        </div>
+      </div>
+
+      <!-- Mode 3 Output -->
+      <div id="m3Output"></div>
+    </div>
+
+  </div><!-- /container -->
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    const GROQ_KEY = 'ssp_groq_key';
+    requireApiKey(GROQ_KEY, 'apiWarning');
+
+    var m1PageText = '';
+    var m3HubText  = '';
+
+    /* ══════════════════════════════════════════════ */
+    /* MODE TABS                                       */
+    /* ══════════════════════════════════════════════ */
+    var activeMode = 1;
+
+    document.querySelectorAll('.mode-tab-large').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.mode-tab-large').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        activeMode = parseInt(this.dataset.mode);
+        document.getElementById('mode1').style.display = activeMode === 1 ? 'block' : 'none';
+        document.getElementById('mode2').style.display = activeMode === 2 ? 'block' : 'none';
+        document.getElementById('mode3').style.display = activeMode === 3 ? 'block' : 'none';
+      });
+    });
+
+    /* ══════════════════════════════════════════════ */
+    /* MODE 1 LOGIC                                    */
+    /* ══════════════════════════════════════════════ */
+
+    /* Paste toggle */
+    var m1PasteVisible = false;
+    document.getElementById('m1PasteToggle').addEventListener('click', function() {
+      m1PasteVisible = !m1PasteVisible;
+      document.getElementById('m1PasteArea').style.display = m1PasteVisible ? 'block' : 'none';
+      this.textContent = m1PasteVisible ? 'Hide paste area ▴' : 'Or paste content manually ▾';
+    });
+
+    /* Caption toggle hides/shows platform selector */
+    document.getElementById('m1Caption').addEventListener('change', function() {
+      document.getElementById('m1PlatformGroup').style.display = this.value === 'Yes' ? 'block' : 'none';
+    });
+
+    /* Fetch */
+    document.getElementById('m1FetchBtn').addEventListener('click', async function() {
+      var url = document.getElementById('m1Url').value.trim();
+      if (!url) { showToast('Enter a URL to fetch.', 'error'); return; }
+      var statusEl = document.getElementById('m1SourceStatus');
+      statusEl.className = 'source-status';
+      statusEl.textContent = 'Fetching...';
+      document.getElementById('m1FetchSpinner').style.display = 'inline-block';
+      this.disabled = true;
+      try {
+        var text = await fetchPageText(url);
+        m1PageText = text;
+        statusEl.className = 'source-status loaded';
+        statusEl.textContent = 'Page loaded: ' + text.substring(0, 60).replace(/\n/g,' ') + '...';
+      } catch(err) {
+        statusEl.className = 'source-status error';
+        statusEl.textContent = 'Fetch failed. Paste content manually.';
+        m1PageText = '';
+      }
+      document.getElementById('m1FetchSpinner').style.display = 'none';
+      this.disabled = false;
+    });
+
+    /* Generate */
+    document.getElementById('m1GenerateBtn').addEventListener('click', async function() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('Add your Groq API key first.', 'error'); return; }
+
+      var content = m1PageText || document.getElementById('m1ManualContent').value.trim();
+      if (!content) { showToast('Fetch a page or paste content first.', 'error'); return; }
+
+      var conceptCount = parseInt(document.getElementById('m1Concepts').value);
+      var format       = document.getElementById('m1Format').value;
+      var style        = document.getElementById('m1Style').value;
+      var inclCaption  = document.getElementById('m1Caption').value;
+      var platform     = document.getElementById('m1Platform').value;
+      var bizType      = document.getElementById('m1BizType').value;
+      var tone         = document.getElementById('m1Tone').value;
+
+      this.disabled = true;
+      document.getElementById('m1GenSpinner').style.display = 'inline-block';
+
+      var outputEl = document.getElementById('m1Output');
+      outputEl.innerHTML = '<div class="output-block"><div class="output-placeholder"><span class="spinner"></span> Generating ' + conceptCount + ' concept' + (conceptCount > 1 ? 's' : '') + '...</div></div>';
+
+      var systemPrompt = 'You are an art director and social media strategist for a white-label SEO agency. Generate visual content briefs for graphic designers and video editors. Use only facts from the source page. Never invent.\n\nFor each concept, return in EXACTLY this format. Do not use ** or # symbols.\n\nCONCEPT [number]\n\nSCENE\n[Specific visual - who, where, what action, setting. Be specific to this business. No generic stock images.]\n\nTEXT OVERLAY\n[Headline for the graphic - max 8 words]\n\nSUBTEXT\n[Supporting line - max 12 words, optional]\n\nMOOD AND COLOR\n[Mood description and color direction]\n\nFORMAT\n[Selected format]\n\nSTYLE\n[Selected style]\n\nSTOCK SEARCH KEYWORDS\n1. [keyword]\n2. [keyword]\n3. [keyword]\n4. [keyword]\n5. [keyword]\n\nCAPTION\n[Only if Include caption = Yes: platform-appropriate caption for this visual, 3-5 lines, ends with CTA from page]';
+
+      var userPrompt = 'Business type: ' + bizType +
+        '\nTone: ' + tone +
+        '\nNumber of concepts: ' + conceptCount +
+        '\nFormat: ' + format +
+        '\nStyle: ' + style +
+        '\nInclude caption: ' + inclCaption +
+        '\nPlatform (if caption): ' + platform +
+        '\n\nPAGE CONTENT:\n' + content;
+
+      try {
+        var result  = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, conceptCount * 600);
+        var cleaned = cleanOutput(result);
+
+        outputEl.innerHTML = buildConceptOutputs('m1', conceptCount, cleaned);
+        wireConceptCopies('m1', conceptCount, cleaned);
+        initFeedback(outputEl, 'ssp_feedback', 'Visual Studio - Generate from Page', function() { return cleaned; });
+      } catch(err) {
+        outputEl.innerHTML = '<div class="output-block"><div class="output-placeholder" style="color:var(--danger);">Error: ' + err.message + '</div></div>';
+      }
+
+      this.disabled = false;
+      document.getElementById('m1GenSpinner').style.display = 'none';
+    });
+
+    /* ══════════════════════════════════════════════ */
+    /* MODE 2 LOGIC                                    */
+    /* ══════════════════════════════════════════════ */
+
+    document.getElementById('m2GenerateBtn').addEventListener('click', async function() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('Add your Groq API key first.', 'error'); return; }
+
+      var caption      = document.getElementById('m2Caption').value.trim();
+      if (!caption) { showToast('Paste the existing caption first.', 'error'); return; }
+
+      var conceptCount = parseInt(document.getElementById('m2Concepts').value);
+      var format       = document.getElementById('m2Format').value;
+      var style        = document.getElementById('m2Style').value;
+      var bizType      = document.getElementById('m2BizType').value;
+
+      this.disabled = true;
+      document.getElementById('m2GenSpinner').style.display = 'inline-block';
+
+      var outputEl = document.getElementById('m2Output');
+      outputEl.innerHTML = '<div class="output-block"><div class="output-placeholder"><span class="spinner"></span> Generating brief' + (conceptCount > 1 ? 's' : '') + '...</div></div>';
+
+      var systemPrompt = 'You are an art director. A caption has already been written. Your job is to create a graphic brief that matches the caption exactly - the visual must reinforce what the caption says, not contradict or ignore it.\n\nRead the caption carefully. Extract the core message, the tone, the subject, and the implied CTA.\n\nFor each concept, return in EXACTLY this format. Do not use ** or # symbols.\n\nCONCEPT [number]\n\nCAPTION CORE MESSAGE\n[One sentence: what is this caption actually about?]\n\nSCENE\n[Visual that directly matches the caption\'s message. Specific - no generic stock.]\n\nTEXT OVERLAY\n[Pulled from or inspired by the caption - max 8 words]\n\nSUBTEXT\n[Supporting line - max 12 words]\n\nMOOD AND COLOR\n[Match the tone of the caption]\n\nFORMAT\n[Selected format]\n\nSTYLE\n[Selected style]\n\nSTOCK SEARCH KEYWORDS\n1. [keyword]\n2. [keyword]\n3. [keyword]\n4. [keyword]\n5. [keyword]\n\nALIGNMENT NOTE\n[One sentence confirming how this visual connects to the caption - so the designer understands the intent before starting]';
+
+      var userPrompt = 'Business type: ' + bizType +
+        '\nNumber of concepts: ' + conceptCount +
+        '\nFormat: ' + format +
+        '\nStyle: ' + style +
+        '\n\nEXISTING CAPTION:\n' + caption;
+
+      try {
+        var result  = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, conceptCount * 500);
+        var cleaned = cleanOutput(result);
+
+        outputEl.innerHTML = buildConceptOutputs('m2', conceptCount, cleaned);
+        wireConceptCopies('m2', conceptCount, cleaned);
+        initFeedback(outputEl, 'ssp_feedback', 'Visual Studio - Brief from Caption', function() { return cleaned; });
+      } catch(err) {
+        outputEl.innerHTML = '<div class="output-block"><div class="output-placeholder" style="color:var(--danger);">Error: ' + err.message + '</div></div>';
+      }
+
+      this.disabled = false;
+      document.getElementById('m2GenSpinner').style.display = 'none';
+    });
+
+    /* ══════════════════════════════════════════════ */
+    /* MODE 3 LOGIC                                    */
+    /* ══════════════════════════════════════════════ */
+
+    /* Build spoke URL fields dynamically */
+    function buildSpokeFields(count) {
+      var html = '';
+      for (var i = 1; i <= count; i++) {
+        html += '<div class="field-group">' +
+          '<label class="field-label">Spoke ' + i + ' URL</label>' +
+          '<input type="url" id="m3Spoke' + i + '" class="input-field" placeholder="https://client.com/service-page" />' +
+          '</div>';
+      }
+      document.getElementById('m3SpokeFields').innerHTML = html;
+    }
+
+    buildSpokeFields(3);
+
+    document.getElementById('m3PostCount').addEventListener('change', function() {
+      buildSpokeFields(parseInt(this.value));
+    });
+
+    /* Fetch hub */
+    document.getElementById('m3FetchBtn').addEventListener('click', async function() {
+      var url = document.getElementById('m3HubUrl').value.trim();
+      if (!url) { showToast('Enter the hub page URL.', 'error'); return; }
+      var statusEl = document.getElementById('m3SourceStatus');
+      statusEl.className = 'source-status';
+      statusEl.textContent = 'Fetching hub page...';
+      document.getElementById('m3FetchSpinner').style.display = 'inline-block';
+      this.disabled = true;
+      try {
+        var text = await fetchPageText(url);
+        m3HubText = text;
+        statusEl.className = 'source-status loaded';
+        statusEl.textContent = 'Hub page loaded: ' + text.substring(0, 60).replace(/\n/g,' ') + '...';
+      } catch(err) {
+        statusEl.className = 'source-status error';
+        statusEl.textContent = 'Fetch failed. Check the URL.';
+        m3HubText = '';
+      }
+      document.getElementById('m3FetchSpinner').style.display = 'none';
+      this.disabled = false;
+    });
+
+    /* Generate GBP Post Pack */
+    document.getElementById('m3GenerateBtn').addEventListener('click', async function() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('Add your Groq API key first.', 'error'); return; }
+      if (!m3HubText) { showToast('Fetch the hub page first.', 'error'); return; }
+
+      var postCount    = parseInt(document.getElementById('m3PostCount').value);
+      var postLength   = document.getElementById('m3PostLength').value;
+      var cta          = document.getElementById('m3Cta').value;
+      var incGraphic   = document.getElementById('m3Graphic').value;
+      var graphicFmt   = document.getElementById('m3GraphicFormat').value;
+      var graphicStyle = document.getElementById('m3GraphicStyle').value;
+      var bizType      = document.getElementById('m3BizType').value;
+      var tone         = document.getElementById('m3Tone').value;
+
+      var spokeUrls = [];
+      for (var i = 1; i <= postCount; i++) {
+        var el = document.getElementById('m3Spoke' + i);
+        spokeUrls.push(el ? el.value.trim() : '');
+      }
+
+      this.disabled = true;
+      document.getElementById('m3GenSpinner').style.display = 'inline-block';
+
+      var outputEl   = document.getElementById('m3Output');
+      var progressEl = document.getElementById('m3Progress');
+      outputEl.innerHTML = '';
+      progressEl.className = 'progress-msg show';
+
+      var systemPrompt = 'You are a local SEO specialist and GBP content strategist. Generate a pack of Google Business Profile posts for a local business using the link wheeling technique - each post links to a different page on the site, creating a network of links that distributes authority and covers multiple topics.\n\nRules:\n- Use only facts from the hub page content provided.\n- Each post must have a different angle - no repetition.\n- Naturally weave in the business location and primary service. No keyword stuffing.\n- Each post links to its assigned spoke URL.\n- Write as if the business owner is speaking directly to a local customer.\n- Do not use ** or # symbols anywhere.\n\nFor each post, return in EXACTLY this format:\n\nPOST [number]\n\nANGLE\n[One label describing this post\'s focus, e.g. Service Spotlight / Trust Builder / Local Story / Seasonal Tip / Client Win / FAQ Answer]\n\nGBP POST COPY\n[Full post body - length matches preference. Open with a local hook. Include one concrete benefit. Mention the business location naturally. End with the CTA type selected.]\n\nLINK TO EMBED\n[Spoke URL for this post]\n\nWHY THIS ANGLE\n[One sentence: why this angle was chosen and how it differs from the other posts in the pack]\n\nGRAPHIC BRIEF\n[Only if Include graphic brief = Yes:\nSCENE: [specific visual]\nTEXT OVERLAY: [max 8 words]\nMOOD AND COLOR: [description]\nFORMAT: [selected format]\nSTYLE: [selected style]\nSTOCK KEYWORDS: 1. 2. 3. 4. 5.]';
+
+      var allResults = [];
+
+      for (var idx = 1; idx <= postCount; idx++) {
+        progressEl.textContent = 'Generating post ' + idx + ' of ' + postCount + '...';
+
+        var userPrompt = 'Business type: ' + bizType +
+          '\nTone: ' + tone +
+          '\nPost number: ' + idx + ' of ' + postCount +
+          '\nPost length: ' + postLength +
+          '\nCTA type: ' + cta +
+          '\nInclude graphic brief: ' + incGraphic +
+          '\nGraphic format: ' + graphicFmt +
+          '\nGraphic style: ' + graphicStyle +
+          '\nSpoke URL for this post: ' + (spokeUrls[idx-1] || 'Not provided') +
+          '\nAll spoke URLs in pack: ' + spokeUrls.join(', ') +
+          '\n\nHUB PAGE CONTENT:\n' + m3HubText;
+
+        try {
+          var result  = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 800);
+          var cleaned = cleanOutput(result);
+          allResults.push({ idx: idx, text: cleaned });
+
+          /* Extract angle label for the post heading */
+          var angleMatch = cleaned.match(/ANGLE\s*\n(.+)/);
+          var angleLabel = angleMatch ? angleMatch[1].trim() : 'Post ' + idx;
+
+          var postDiv = document.createElement('div');
+          postDiv.className = 'concept-output';
+          postDiv.innerHTML =
+            '<div class="concept-label">POST ' + idx + ' — ' + angleLabel + '</div>' +
+            '<div class="output-block">' +
+              '<button class="copy-btn" id="m3Copy' + idx + '">Copy</button>' +
+              '<div class="output-text" id="m3PostText' + idx + '">' + escapeHtml(cleaned) + '</div>' +
+            '</div>';
+          outputEl.appendChild(postDiv);
+
+          /* Wire copy */
+          (function(copyId, textId) {
+            document.getElementById(copyId).addEventListener('click', function() {
+              var text = document.getElementById(textId).textContent;
+              navigator.clipboard.writeText(text).then(function() {
+                var btn = document.getElementById(copyId);
+                btn.textContent = 'Copied ✓';
+                btn.classList.add('copied');
+                setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+              });
+            });
+          })('m3Copy' + idx, 'm3PostText' + idx);
+
+        } catch(err) {
+          var errDiv = document.createElement('div');
+          errDiv.className = 'concept-output';
+          errDiv.innerHTML = '<div class="concept-label">POST ' + idx + '</div><div class="output-block"><div class="output-placeholder" style="color:var(--danger);">Error generating post ' + idx + ': ' + err.message + '</div></div>';
+          outputEl.appendChild(errDiv);
+        }
+      }
+
+      /* Feedback row */
+      var fbDiv = document.createElement('div');
+      fbDiv.innerHTML = '<div class="feedback-row" style="margin-top:16px;">' +
+        '<span class="feedback-label">Was this pack helpful?</span>' +
+        '<button class="feedback-btn feedback-up">👍</button>' +
+        '<button class="feedback-btn feedback-down">👎</button>' +
+        '<div class="feedback-detail">' +
+          '<textarea class="textarea-field feedback-textarea" rows="2" placeholder="What was wrong?"></textarea>' +
+          '<button class="btn-ghost btn-sm feedback-send">Send feedback</button>' +
+        '</div></div>';
+      outputEl.appendChild(fbDiv);
+      initFeedback(outputEl, 'ssp_feedback', 'Visual Studio - GBP Post Pack', function() {
+        return allResults.map(function(r) { return r.text; }).join('\n\n---\n\n');
+      });
+
+      progressEl.textContent = 'All ' + postCount + ' posts generated!';
+      setTimeout(function() { progressEl.className = 'progress-msg'; }, 3000);
+
+      this.disabled = false;
+      document.getElementById('m3GenSpinner').style.display = 'none';
+    });
+
+    /* ══════════════════════════════════════════════ */
+    /* HELPERS                                         */
+    /* ══════════════════════════════════════════════ */
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function buildConceptOutputs(prefix, count, fullText) {
+      if (count === 1) {
+        return '<div class="output-block">' +
+          '<button class="copy-btn" id="' + prefix + 'Copy1">Copy</button>' +
+          '<div class="output-text" id="' + prefix + 'ConceptText1">' + escapeHtml(fullText) + '</div>' +
+          '</div>' +
+          '<div class="feedback-row" id="' + prefix + 'FeedbackRow">' +
+            '<span class="feedback-label">Was this helpful?</span>' +
+            '<button class="feedback-btn feedback-up">👍</button>' +
+            '<button class="feedback-btn feedback-down">👎</button>' +
+            '<div class="feedback-detail">' +
+              '<textarea class="textarea-field feedback-textarea" rows="2" placeholder="What was wrong?"></textarea>' +
+              '<button class="btn-ghost btn-sm feedback-send">Send feedback</button>' +
+            '</div>' +
+          '</div>';
+      }
+
+      /* Split on CONCEPT markers for multi-concept output */
+      var parts = fullText.split(/(?=CONCEPT\s+\d)/);
+      var html  = '';
+
+      for (var i = 0; i < Math.min(parts.length, count); i++) {
+        var idx  = i + 1;
+        var text = parts[i].trim();
+        if (!text) continue;
+        html += '<div class="concept-output">' +
+          '<div class="concept-label">Concept ' + idx + '</div>' +
+          '<div class="output-block">' +
+            '<button class="copy-btn" id="' + prefix + 'Copy' + idx + '">Copy</button>' +
+            '<div class="output-text" id="' + prefix + 'ConceptText' + idx + '">' + escapeHtml(text) + '</div>' +
+          '</div>' +
+          '</div>';
+      }
+
+      html += '<div class="feedback-row" id="' + prefix + 'FeedbackRow">' +
+        '<span class="feedback-label">Was this helpful?</span>' +
+        '<button class="feedback-btn feedback-up">👍</button>' +
+        '<button class="feedback-btn feedback-down">👎</button>' +
+        '<div class="feedback-detail">' +
+          '<textarea class="textarea-field feedback-textarea" rows="2" placeholder="What was wrong?"></textarea>' +
+          '<button class="btn-ghost btn-sm feedback-send">Send feedback</button>' +
+        '</div>' +
+        '</div>';
+
+      return html;
+    }
+
+    function wireConceptCopies(prefix, count, fullText) {
+      var parts = count === 1 ? [fullText] : fullText.split(/(?=CONCEPT\s+\d)/);
+      for (var i = 0; i < Math.min(parts.length || 1, count); i++) {
+        (function(idx, textId, btnId) {
+          var btn = document.getElementById(btnId);
+          if (!btn) return;
+          btn.addEventListener('click', function() {
+            var text = document.getElementById(textId).textContent;
+            navigator.clipboard.writeText(text).then(function() {
+              btn.textContent = 'Copied ✓';
+              btn.classList.add('copied');
+              setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+          });
+        })(i + 1, prefix + 'ConceptText' + (i + 1), prefix + 'Copy' + (i + 1));
+      }
+    }
+  </script>
+</body>
+</html>

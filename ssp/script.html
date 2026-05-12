@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Script Generator — SSP Content Engine</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  </style>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="rgba(108,99,255,0.2)"/>
+        <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6-2.686 6-6 6" stroke="#6c63ff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="14" cy="14" r="2.5" fill="#6c63ff"/>
+      </svg>
+      Stream <span>SEO Pros</span>
+    </div>
+    <a href="index.html" class="back-nav" style="margin-bottom:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      SSP Content Engine
+    </a>
+  </header>
+
+  <div class="container">
+
+    <div class="warning-banner" id="noKeyWarning" style="display:none;">
+      No Groq API key found. <a href="index.html">Go back and add your key</a> before generating.
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <h1 class="page-title">Video Script Generator</h1>
+      <p class="page-subtitle">Turn any client page into a ready-to-record video script with hook, body, and CTA.</p>
+    </div>
+
+    <!-- Source Input -->
+    <div class="card section-gap">
+      <div class="form-stack">
+
+        <div class="form-group">
+          <label class="form-label">Source URL</label>
+          <div class="url-row">
+            <input type="url" class="input-field" id="sourceUrl" placeholder="https://client.com/service-page">
+            <button class="btn-primary btn-sm" id="fetchBtn">Fetch Page</button>
+          </div>
+          <div class="status-indicator" id="fetchStatus"></div>
+        </div>
+
+        <button class="source-toggle-link" id="pasteToggle">+ Paste content manually instead</button>
+
+        <div id="pasteArea" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">Page Content</label>
+            <textarea class="textarea-field" id="manualContent" placeholder="Paste the page text here..." style="min-height:160px;"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Business Type</label>
+            <select class="select-field" id="businessType">
+              <option value="Auto-detect">Auto-detect</option>
+              <option value="Law Firm">Law Firm</option>
+              <option value="Home Services">Home Services</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tone</label>
+            <select class="select-field" id="tone">
+              <option value="Auto-detect">Auto-detect</option>
+              <option value="Professional">Professional</option>
+              <option value="Friendly">Friendly</option>
+              <option value="Urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Script Type Tabs -->
+    <div class="mode-tabs" id="scriptTypeTabs">
+      <button class="mode-tab active" data-tab="short">Short-form (60–90 sec)</button>
+      <button class="mode-tab" data-tab="long">Long-form (2–3 min)</button>
+    </div>
+
+    <!-- Short-form prefs -->
+    <div id="shortPrefs" class="card section-gap">
+      <div class="pref-panel" style="border-top:none; padding-top:0;">
+        <button class="pref-toggle" id="shortPrefToggle" data-label="Script Preferences">Script Preferences ▾</button>
+        <div class="pref-content" id="shortPrefContent">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Script Length</label>
+              <div class="radio-group" id="shortLengthGroup">
+                <button class="radio-btn active" data-value="60 seconds">60 sec</button>
+                <button class="radio-btn" data-value="75 seconds">75 sec</button>
+                <button class="radio-btn" data-value="90 seconds">90 sec</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hook Style</label>
+              <select class="select-field" id="shortHookStyle">
+                <option value="Question">Question</option>
+                <option value="Shocking fact">Shocking fact</option>
+                <option value="Problem statement">Problem statement</option>
+                <option value="Bold claim">Bold claim</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Include B-roll Notes</label>
+              <select class="select-field" id="shortBroll">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Include Subtitle Cues</label>
+              <select class="select-field" id="shortSubtitles">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Long-form prefs -->
+    <div id="longPrefs" class="card section-gap" style="display:none;">
+      <div class="pref-panel" style="border-top:none; padding-top:0;">
+        <button class="pref-toggle" id="longPrefToggle" data-label="Script Preferences">Script Preferences ▾</button>
+        <div class="pref-content" id="longPrefContent">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Script Length</label>
+              <div class="radio-group" id="longLengthGroup">
+                <button class="radio-btn active" data-value="2 minutes">2 min</button>
+                <button class="radio-btn" data-value="2.5 minutes">2.5 min</button>
+                <button class="radio-btn" data-value="3 minutes">3 min</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hook Style</label>
+              <select class="select-field" id="longHookStyle">
+                <option value="Question">Question</option>
+                <option value="Shocking fact">Shocking fact</option>
+                <option value="Problem statement">Problem statement</option>
+                <option value="Bold claim">Bold claim</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Include B-roll Notes</label>
+              <select class="select-field" id="longBroll">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Include Subtitle Cues</label>
+              <select class="select-field" id="longSubtitles">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="generateBtn" style="margin-bottom: 24px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7"/>
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+      </svg>
+      Generate Script
+    </button>
+
+    <!-- Output -->
+    <div id="outputSection" style="display:none;">
+      <div class="output-label">Generated Script</div>
+      <div class="output-block" id="outputBlock">
+        <div class="output-placeholder" id="outputPlaceholder">Your script will appear here...</div>
+        <pre class="output-content" id="outputContent" style="display:none;"></pre>
+        <button class="copy-btn" id="copyBtn" style="display:none;">Copy</button>
+      </div>
+      <div class="feedback-row" id="feedbackRow">
+        <span style="font-size:13px; color:var(--text-secondary);">Was this helpful?</span>
+        <button class="feedback-btn feedback-btn-up">👍</button>
+        <button class="feedback-btn feedback-btn-down">👎</button>
+      </div>
+      <div class="feedback-expand" id="feedbackExpand">
+        <label class="feedback-label">What was wrong?</label>
+        <textarea class="textarea-field feedback-comment" placeholder="Describe the issue..." style="min-height:80px;"></textarea>
+        <button class="btn-ghost btn-sm feedback-send" style="align-self:flex-start;">Send Feedback</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    tools.streamseopros.com · Internal use only
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    var GROQ_KEY = 'ssp_groq_key';
+    var pageText = '';
+    var activeTab = 'short';
+
+    if (!getApiKey(GROQ_KEY)) {
+      document.getElementById('noKeyWarning').style.display = '';
+    }
+
+    // Pref panels
+    initPrefPanel(document.getElementById('shortPrefToggle'), document.getElementById('shortPrefContent'));
+    initPrefPanel(document.getElementById('longPrefToggle'), document.getElementById('longPrefContent'));
+
+    // Radio groups
+    initRadioGroup(document.getElementById('shortLengthGroup'));
+    initRadioGroup(document.getElementById('longLengthGroup'));
+
+    // Script type tabs
+    document.getElementById('scriptTypeTabs').addEventListener('click', function(e) {
+      var tab = e.target.closest('.mode-tab');
+      if (!tab) return;
+      document.querySelectorAll('#scriptTypeTabs .mode-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      activeTab = tab.dataset.tab;
+      document.getElementById('shortPrefs').style.display = activeTab === 'short' ? '' : 'none';
+      document.getElementById('longPrefs').style.display = activeTab === 'long' ? '' : 'none';
+    });
+
+    // Paste toggle
+    var pasteVisible = false;
+    document.getElementById('pasteToggle').addEventListener('click', function() {
+      pasteVisible = !pasteVisible;
+      document.getElementById('pasteArea').style.display = pasteVisible ? '' : 'none';
+      this.textContent = pasteVisible ? '− Hide manual paste' : '+ Paste content manually instead';
+    });
+
+    // Fetch page
+    document.getElementById('fetchBtn').addEventListener('click', async function() {
+      var url = document.getElementById('sourceUrl').value.trim();
+      if (!url) { showToast('Enter a URL first.'); return; }
+      var status = document.getElementById('fetchStatus');
+      status.className = 'status-indicator';
+      status.textContent = 'Fetching...';
+      this.disabled = true;
+      try {
+        var text = await fetchPageText(url);
+        pageText = text;
+        var preview = text.substring(0, 60).replace(/\n/g, ' ');
+        status.className = 'status-indicator success';
+        status.textContent = 'Page loaded: ' + preview + (text.length > 60 ? '...' : '');
+        showToast('Page fetched successfully.');
+      } catch(e) {
+        status.className = 'status-indicator error';
+        status.textContent = 'Fetch failed: ' + e.message;
+        pageText = '';
+      }
+      this.disabled = false;
+    });
+
+    // Generate
+    document.getElementById('generateBtn').addEventListener('click', generateScript);
+
+    async function generateScript() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('No API key found.'); return; }
+
+      var manual = document.getElementById('manualContent').value.trim();
+      var content = manual || pageText;
+      if (!content) { showToast('Fetch a page or paste content first.'); return; }
+
+      var businessType = document.getElementById('businessType').value;
+      var tone = document.getElementById('tone').value;
+
+      var systemPrompt, userPromptExtra;
+
+      if (activeTab === 'short') {
+        var scriptLen = getRadioValue(document.getElementById('shortLengthGroup')) || '60 seconds';
+        var hookStyle = document.getElementById('shortHookStyle').value;
+        var broll = document.getElementById('shortBroll').value;
+        var subtitles = document.getElementById('shortSubtitles').value;
+
+        systemPrompt = 'You are a professional video scriptwriter for a white-label SEO agency. Write scripts for local service businesses and law firms. Use only facts from the page content provided. Never invent details.\n\nReturn your output in EXACTLY this format.\nNo extra text before or after.\nDo not use ** or # symbols anywhere.\n\nHOOK (0-3 seconds)\n[1-2 punchy sentences. Style: ' + hookStyle + '. Must grab attention immediately.]\n\nBODY\nPoint 1: [Key benefit or fact from page]\nPoint 2: [Key benefit or fact from page]\nPoint 3: [Key benefit or fact from page — omit if it makes the script too long]\n\nCALL TO ACTION\n[Direct CTA using the actual contact method or offer from the page]\n\nB-ROLL NOTES\n[Only if Include B-roll = ' + broll + ': 3 specific scene suggestions matching the script content]\n\nSUBTITLE CUES\n[Only if Include subtitle cues = ' + subtitles + ': mark natural pause points with | for the editor]\n\nESTIMATED READ TIME: [X seconds]\nWORD COUNT: [X words]';
+        userPromptExtra = 'Script length target: ' + scriptLen + '\nHook style: ' + hookStyle + '\nInclude B-roll: ' + broll + '\nInclude subtitle cues: ' + subtitles;
+      } else {
+        var scriptLen = getRadioValue(document.getElementById('longLengthGroup')) || '2 minutes';
+        var hookStyle = document.getElementById('longHookStyle').value;
+        var broll = document.getElementById('longBroll').value;
+        var subtitles = document.getElementById('longSubtitles').value;
+
+        systemPrompt = 'You are a professional video scriptwriter for a white-label SEO agency. Use only facts from the page content. Never invent details.\n\nReturn in EXACTLY this format.\nDo not use ** or # symbols anywhere.\n\nHOOK (0-5 seconds)\n[Attention-grabbing opening — problem or fact]\n\nTHE PROBLEM\n[What the audience is dealing with — 2-3 sentences]\n\nTHE SOLUTION\n[How this business solves it — specifics from page]\n\nWHY TRUST US\n[Credentials, service area, experience, trust signals from the page]\n\nCALL TO ACTION\n[Clear, direct CTA from the page]\n\nB-ROLL NOTES\n[Only if Include B-roll = ' + broll + ': 5 specific scene suggestions]\n\nSUBTITLE CUES\n[Only if Include subtitle cues = ' + subtitles + ']\n\nESTIMATED READ TIME: [X minutes X seconds]\nWORD COUNT: [X words]';
+        userPromptExtra = 'Script length target: ' + scriptLen + '\nHook style: ' + hookStyle + '\nInclude B-roll: ' + broll + '\nInclude subtitle cues: ' + subtitles;
+      }
+
+      var userPrompt = 'Business Type: ' + businessType + '\nTone: ' + tone + '\n' + userPromptExtra + '\n\nPAGE CONTENT:\n' + content;
+
+      var btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+      var outputSection = document.getElementById('outputSection');
+      var outputPlaceholder = document.getElementById('outputPlaceholder');
+      var outputContent = document.getElementById('outputContent');
+      var copyBtn = document.getElementById('copyBtn');
+
+      outputSection.style.display = '';
+      outputPlaceholder.style.display = '';
+      outputPlaceholder.style.color = 'var(--text-secondary)';
+      outputPlaceholder.textContent = 'Your script will appear here...';
+      outputContent.style.display = 'none';
+      copyBtn.style.display = 'none';
+      outputContent.textContent = '';
+
+      try {
+        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2000);
+        var cleaned = cleanOutput(result);
+        outputContent.textContent = cleaned;
+        outputPlaceholder.style.display = 'none';
+        outputContent.style.display = '';
+        copyBtn.style.display = '';
+      } catch(e) {
+        outputPlaceholder.textContent = 'Error: ' + e.message;
+        outputPlaceholder.style.color = 'var(--danger)';
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> Generate Script';
+
+      initCopyBtn(copyBtn, function() { return outputContent.textContent; });
+    }
+
+    initFeedback(
+      document.getElementById('outputSection'),
+      'ssp_feedback',
+      'Video Script Generator',
+      function() { return document.getElementById('outputContent').textContent; }
+    );
+  </script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stream SEO Pros — Internal Tools</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --surface-2: #21253a;
+      --border: #2a2d3a; --accent: #6c63ff; --accent-hover: #857dff;
+      --text-primary: #f0f0f5; --text-secondary: #8b8fa8;
+      --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
+      --radius: 10px; --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    .main-header {
+      text-align: center;
+      padding: 60px 20px 48px;
+    }
+
+    .main-logo {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .main-logo .accent { color: var(--accent); }
+
+    .main-tagline {
+      font-size: 15px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .hero-section {
+      padding: 0 20px 80px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .hero-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 40px rgba(108, 99, 255, 0.12);
+      transform: translateY(-3px);
+    }
+
+    .hero-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(108, 99, 255, 0.12);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .hero-title {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .hero-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 11px 22px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      width: fit-content;
+      transition: background 0.18s ease;
+    }
+
+    .hero-cta:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+
+    .site-footer {
+      text-align: center;
+      padding: 24px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    @media (max-width: 640px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .main-logo { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="main-header">
+    <div class="main-logo">Stream<span class="accent">SEO</span>Pros</div>
+    <div class="main-tagline">Internal Tools</div>
+  </header>
+
+  <section class="hero-section">
+    <div class="hero-grid">
+
+      <!-- ASN Workbench -->
+      <a class="hero-card" href="asn/index.html">
+        <div class="hero-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <div class="hero-title">ASN Workbench</div>
+        <div class="hero-desc">SEO content briefs, page optimization, and client reporting for the ASN delivery team.</div>
+        <span class="hero-cta">
+          Open ASN Tools
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </span>
+      </a>
+
+      <!-- SSP Content Engine -->
+      <a class="hero-card" href="ssp/index.html">
+        <div class="hero-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+        </div>
+        <div class="hero-title">SSP Content Engine</div>
+        <div class="hero-desc">Generate video scripts, social captions, GBP post packs with link wheeling, and graphic briefs from any client page.</div>
+        <span class="hero-cta">
+          Open SSP Tools
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </span>
+      </a>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    tools.streamseopros.com &nbsp;·&nbsp; Internal use only
+  </footer>
+
+</body>
+</html>

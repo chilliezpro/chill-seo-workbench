@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Builder — ASN Workbench</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  </style>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="rgba(108,99,255,0.2)"/>
+        <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6-2.686 6-6 6" stroke="#6c63ff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="14" cy="14" r="2.5" fill="#6c63ff"/>
+      </svg>
+      Stream <span>SEO Pros</span>
+    </div>
+    <a href="index.html" class="back-nav" style="margin-bottom:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      ASN Workbench
+    </a>
+  </header>
+
+  <div class="container">
+
+    <div class="warning-banner" id="noKeyWarning" style="display:none;">
+      No Groq API key found. <a href="index.html">Go back and add your key</a> before generating.
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <h1 class="page-title">Report Builder</h1>
+      <p class="page-subtitle">Paste GSC, GBP, GA4, and LSA data to generate client-ready monthly reports and internal action plans.</p>
+    </div>
+
+    <!-- Step 1: Data Entry -->
+    <div class="card section-gap">
+      <div style="margin-bottom: 16px; display:flex; align-items:center; gap:10px;">
+        <span class="badge">Step 1</span>
+        <span style="font-weight:600;">Enter Client Data</span>
+      </div>
+      <div class="form-stack">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Client Name</label>
+            <input type="text" class="input-field" id="clientName" placeholder="e.g. Johnson Plumbing">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reporting Month</label>
+            <input type="text" class="input-field" id="reportMonth" placeholder="e.g. April 2025">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Google Search Console (GSC) Data</label>
+          <textarea class="textarea-field" id="gscData" placeholder="Paste GSC data here — clicks, impressions, CTR, position, top queries, top pages..." style="min-height:120px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Google Business Profile (GBP) Data</label>
+          <textarea class="textarea-field" id="gbpData" placeholder="Paste GBP data — views, searches, calls, direction requests, website clicks, reviews..." style="min-height:120px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Google Analytics 4 (GA4) Data</label>
+          <textarea class="textarea-field" id="ga4Data" placeholder="Paste GA4 data — sessions, users, conversions, top pages, traffic sources..." style="min-height:120px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Local Services Ads (LSA) Data</label>
+          <textarea class="textarea-field" id="lsaData" placeholder="Paste LSA data — leads, charged leads, spend, categories..." style="min-height:100px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Additional Notes / Context <span style="font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
+          <textarea class="textarea-field" id="additionalNotes" placeholder="Any context the AI should know: new pages launched, service changes, seasonality, goals for next month..." style="min-height:80px;"></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Step 2: Preferences -->
+    <div class="card section-gap">
+      <div style="margin-bottom: 16px; display:flex; align-items:center; gap:10px;">
+        <span class="badge">Step 2</span>
+        <span style="font-weight:600;">Report Preferences</span>
+      </div>
+      <div class="form-stack">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Report Length</label>
+            <select class="select-field" id="reportLength">
+              <option value="Executive summary only">Executive summary only</option>
+              <option value="Standard" selected>Standard</option>
+              <option value="Detailed">Detailed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Report Tone</label>
+            <select class="select-field" id="reportTone">
+              <option value="Professional">Professional</option>
+              <option value="Conversational">Conversational</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Include Internal Action Plan</label>
+            <select class="select-field" id="inclActionPlan">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Highlight Wins Prominently</label>
+            <select class="select-field" id="highlightWins">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Generate -->
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px;">
+      <button class="btn-primary" id="generateClientBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Generate Client Report
+      </button>
+      <button class="btn-ghost" id="generateInternalBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Generate Internal Plan
+      </button>
+      <button class="btn-ghost" id="generateBothBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Generate Both
+      </button>
+    </div>
+
+    <!-- Client Report Output -->
+    <div id="clientReportSection" style="display:none; margin-bottom:24px;">
+      <div class="output-label">Client Report</div>
+      <div class="output-block" id="clientOutputBlock">
+        <div class="output-placeholder" id="clientOutputPlaceholder">Generating client report...</div>
+        <pre class="output-content" id="clientOutputContent" style="display:none;"></pre>
+        <button class="copy-btn" id="clientCopyBtn" style="display:none;">Copy</button>
+      </div>
+      <div class="feedback-row" id="clientFeedbackRow">
+        <span style="font-size:13px; color:var(--text-secondary);">Was this helpful?</span>
+        <button class="feedback-btn feedback-btn-up">👍</button>
+        <button class="feedback-btn feedback-btn-down">👎</button>
+      </div>
+      <div class="feedback-expand" id="clientFeedbackExpand">
+        <label class="feedback-label">What was wrong?</label>
+        <textarea class="textarea-field feedback-comment" placeholder="Describe the issue..." style="min-height:80px;"></textarea>
+        <button class="btn-ghost btn-sm feedback-send" style="align-self:flex-start;">Send Feedback</button>
+      </div>
+    </div>
+
+    <!-- Internal Plan Output -->
+    <div id="internalPlanSection" style="display:none;">
+      <div class="output-label">Internal Action Plan</div>
+      <div class="output-block" id="internalOutputBlock">
+        <div class="output-placeholder" id="internalOutputPlaceholder">Generating internal plan...</div>
+        <pre class="output-content" id="internalOutputContent" style="display:none;"></pre>
+        <button class="copy-btn" id="internalCopyBtn" style="display:none;">Copy</button>
+      </div>
+      <div class="feedback-row" id="internalFeedbackRow">
+        <span style="font-size:13px; color:var(--text-secondary);">Was this helpful?</span>
+        <button class="feedback-btn feedback-btn-up">👍</button>
+        <button class="feedback-btn feedback-btn-down">👎</button>
+      </div>
+      <div class="feedback-expand" id="internalFeedbackExpand">
+        <label class="feedback-label">What was wrong?</label>
+        <textarea class="textarea-field feedback-comment" placeholder="Describe the issue..." style="min-height:80px;"></textarea>
+        <button class="btn-ghost btn-sm feedback-send" style="align-self:flex-start;">Send Feedback</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    tools.streamseopros.com · Internal use only
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    var GROQ_KEY = 'asn_groq_key';
+
+    if (!getApiKey(GROQ_KEY)) {
+      document.getElementById('noKeyWarning').style.display = '';
+    }
+
+    var MISSING_DATA_PREFIX = 'If any data section is blank or missing, write exactly:\n[Section name]: No data provided for this period.\nDo not skip missing sections. Do not invent numbers.\nDo not change the format of other sections because one section is missing.\n\nDo not use markdown bold (**) or heading symbols (#).\nUse plain section labels in ALL CAPS followed by a line break instead of markdown headers.\n\n';
+
+    var CLIENT_SYSTEM_PROMPT = MISSING_DATA_PREFIX + 'You are a senior SEO account manager. Generate a professional, outcomes-first monthly report for the client. The report should highlight wins first, explain what drove the results, note anything that declined and why, and end with next steps.\n\nReturn in this exact format:\n\nEXECUTIVE SUMMARY\n[2-3 sentences: the single most important story from this month\'s data. Outcomes first.]\n\nKEY WINS THIS MONTH\n[3-5 specific wins with numbers where available. One per line.]\n\nSEARCH PERFORMANCE (GSC)\n[Summarize clicks, impressions, CTR, position. Highlight top queries and pages. Note trends.]\n\nLOCAL PRESENCE (GBP)\n[Summarize views, calls, direction requests, reviews, website clicks. Highlight notable changes.]\n\nWEBSITE TRAFFIC (GA4)\n[Summarize sessions, users, conversions, top traffic sources. Note any significant changes.]\n\nLOCAL ADS PERFORMANCE (LSA)\n[Summarize leads, spend, performance. Note efficiency or issues.]\n\nWHAT NEEDS ATTENTION\n[1-3 items that declined or need focus next month. Be honest but constructive.]\n\nNEXT MONTH PRIORITIES\n[3-4 specific action items for the coming month]\n\nReport length preference: {LENGTH}\nHighlight wins prominently: {WINS}\nTone: {TONE}';
+
+    var INTERNAL_SYSTEM_PROMPT = MISSING_DATA_PREFIX + 'You are an SEO delivery team lead. Generate an internal action plan based on the client\'s monthly data. This is for the internal team, not the client — be direct, specific, and technical where needed.\n\nReturn in this exact format:\n\nDATA SUMMARY\n[Quick summary of this month\'s numbers across all platforms]\n\nWHAT\'S WORKING\n[List what\'s performing well and why it matters]\n\nPROBLEM AREAS\n[List specific issues identified in the data]\n\nPRIORITY TASKS FOR NEXT MONTH\nTask 1: [Specific task — what, why, expected impact]\nTask 2: [Specific task — what, why, expected impact]\nTask 3: [Specific task — what, why, expected impact]\n[Continue as needed]\n\nCONTENT OPPORTUNITIES\n[2-3 content ideas based on the data]\n\nTECHNICAL FLAGS\n[Any technical issues suggested by the data that need investigation]\n\nCLIENT COMMUNICATION NOTES\n[What to tell the client vs. what to handle internally]';
+
+    function gatherInputs() {
+      return {
+        clientName: document.getElementById('clientName').value.trim() || 'Not specified',
+        reportMonth: document.getElementById('reportMonth').value.trim() || 'Not specified',
+        gscData: document.getElementById('gscData').value.trim() || '',
+        gbpData: document.getElementById('gbpData').value.trim() || '',
+        ga4Data: document.getElementById('ga4Data').value.trim() || '',
+        lsaData: document.getElementById('lsaData').value.trim() || '',
+        additionalNotes: document.getElementById('additionalNotes').value.trim() || '',
+        reportLength: document.getElementById('reportLength').value,
+        reportTone: document.getElementById('reportTone').value,
+        inclActionPlan: document.getElementById('inclActionPlan').value,
+        highlightWins: document.getElementById('highlightWins').value
+      };
+    }
+
+    function buildUserPrompt(inputs) {
+      return 'Client: ' + inputs.clientName + '\nMonth: ' + inputs.reportMonth + '\n\nGSC DATA:\n' + (inputs.gscData || 'No GSC data provided.') + '\n\nGBP DATA:\n' + (inputs.gbpData || 'No GBP data provided.') + '\n\nGA4 DATA:\n' + (inputs.ga4Data || 'No GA4 data provided.') + '\n\nLSA DATA:\n' + (inputs.lsaData || 'No LSA data provided.') + '\n\nADDITIONAL NOTES:\n' + (inputs.additionalNotes || 'None.');
+    }
+
+    async function generateClientReport(inputs) {
+      var apiKey = getApiKey(GROQ_KEY);
+      var systemPrompt = CLIENT_SYSTEM_PROMPT
+        .replace('{LENGTH}', inputs.reportLength)
+        .replace('{WINS}', inputs.highlightWins)
+        .replace('{TONE}', inputs.reportTone);
+      var userPrompt = buildUserPrompt(inputs);
+      return await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2500);
+    }
+
+    async function generateInternalPlan(inputs) {
+      var apiKey = getApiKey(GROQ_KEY);
+      var userPrompt = buildUserPrompt(inputs);
+      return await callGroq(apiKey, INTERNAL_SYSTEM_PROMPT, userPrompt, 0.4, 2000);
+    }
+
+    function showClientOutput(text) {
+      document.getElementById('clientReportSection').style.display = '';
+      var placeholder = document.getElementById('clientOutputPlaceholder');
+      var content = document.getElementById('clientOutputContent');
+      var copyBtn = document.getElementById('clientCopyBtn');
+      if (text === null) {
+        placeholder.textContent = 'Generating client report...';
+        placeholder.style.color = 'var(--text-secondary)';
+        placeholder.style.display = '';
+        content.style.display = 'none';
+        copyBtn.style.display = 'none';
+      } else if (text instanceof Error) {
+        placeholder.textContent = 'Error: ' + text.message;
+        placeholder.style.color = 'var(--danger)';
+        placeholder.style.display = '';
+        content.style.display = 'none';
+      } else {
+        content.textContent = cleanOutput(text);
+        placeholder.style.display = 'none';
+        content.style.display = '';
+        copyBtn.style.display = '';
+        initCopyBtn(copyBtn, function() { return content.textContent; });
+      }
+    }
+
+    function showInternalOutput(text) {
+      document.getElementById('internalPlanSection').style.display = '';
+      var placeholder = document.getElementById('internalOutputPlaceholder');
+      var content = document.getElementById('internalOutputContent');
+      var copyBtn = document.getElementById('internalCopyBtn');
+      if (text === null) {
+        placeholder.textContent = 'Generating internal plan...';
+        placeholder.style.color = 'var(--text-secondary)';
+        placeholder.style.display = '';
+        content.style.display = 'none';
+        copyBtn.style.display = 'none';
+      } else if (text instanceof Error) {
+        placeholder.textContent = 'Error: ' + text.message;
+        placeholder.style.color = 'var(--danger)';
+        placeholder.style.display = '';
+        content.style.display = 'none';
+      } else {
+        content.textContent = cleanOutput(text);
+        placeholder.style.display = 'none';
+        content.style.display = '';
+        copyBtn.style.display = '';
+        initCopyBtn(copyBtn, function() { return content.textContent; });
+      }
+    }
+
+    function disableButtons(state) {
+      ['generateClientBtn','generateInternalBtn','generateBothBtn'].forEach(function(id) {
+        var btn = document.getElementById(id);
+        btn.disabled = state;
+      });
+    }
+
+    document.getElementById('generateClientBtn').addEventListener('click', async function() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('No API key found.'); return; }
+      var inputs = gatherInputs();
+      disableButtons(true);
+      this.innerHTML = '<span class="spinner"></span> Generating...';
+      showClientOutput(null);
+      document.getElementById('internalPlanSection').style.display = 'none';
+      try {
+        var result = await generateClientReport(inputs);
+        showClientOutput(result);
+      } catch(e) { showClientOutput(e); }
+      disableButtons(false);
+      this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Generate Client Report';
+    });
+
+    document.getElementById('generateInternalBtn').addEventListener('click', async function() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('No API key found.'); return; }
+      var inputs = gatherInputs();
+      disableButtons(true);
+      this.innerHTML = '<span class="spinner"></span> Generating...';
+      showInternalOutput(null);
+      document.getElementById('clientReportSection').style.display = 'none';
+      try {
+        var result = await generateInternalPlan(inputs);
+        showInternalOutput(result);
+      } catch(e) { showInternalOutput(e); }
+      disableButtons(false);
+      this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Generate Internal Plan';
+    });
+
+    document.getElementById('generateBothBtn').addEventListener('click', async function() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('No API key found.'); return; }
+      var inputs = gatherInputs();
+      disableButtons(true);
+      this.innerHTML = '<span class="spinner"></span> Generating...';
+      showClientOutput(null);
+      showInternalOutput(null);
+      try {
+        var clientResult = await generateClientReport(inputs);
+        showClientOutput(clientResult);
+      } catch(e) { showClientOutput(e); }
+      try {
+        var internalResult = await generateInternalPlan(inputs);
+        showInternalOutput(internalResult);
+      } catch(e) { showInternalOutput(e); }
+      disableButtons(false);
+      this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate Both';
+    });
+
+    // Feedback
+    initFeedback(
+      document.getElementById('clientReportSection'),
+      'asn_feedback',
+      'Report Builder - Client',
+      function() { return document.getElementById('clientOutputContent').textContent; }
+    );
+    initFeedback(
+      document.getElementById('internalPlanSection'),
+      'asn_feedback',
+      'Report Builder - Internal',
+      function() { return document.getElementById('internalOutputContent').textContent; }
+    );
+  </script>
+</body>
+</html>

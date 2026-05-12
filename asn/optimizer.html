@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Optimizer — ASN Workbench</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  </style>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="rgba(108,99,255,0.2)"/>
+        <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6-2.686 6-6 6" stroke="#6c63ff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="14" cy="14" r="2.5" fill="#6c63ff"/>
+      </svg>
+      Stream <span>SEO Pros</span>
+    </div>
+    <a href="index.html" class="back-nav" style="margin-bottom:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      ASN Workbench
+    </a>
+  </header>
+
+  <div class="container">
+
+    <div class="warning-banner" id="noKeyWarning" style="display:none;">
+      No Groq API key found. <a href="index.html">Go back and add your key</a> before generating.
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <h1 class="page-title">Page Optimizer</h1>
+      <p class="page-subtitle">Paste any page and get combined SEO + CRO recommendations, meta rewrites, and priority fixes.</p>
+    </div>
+
+    <div class="card section-gap">
+      <div class="form-stack">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Client Name</label>
+            <input type="text" class="input-field" id="clientName" placeholder="e.g. Johnson Plumbing">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Page Type</label>
+            <select class="select-field" id="pageType">
+              <option value="Homepage">Homepage</option>
+              <option value="Service Page">Service Page</option>
+              <option value="Location Page">Location Page</option>
+              <option value="Blog Post">Blog Post</option>
+              <option value="About Page">About Page</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Primary Keyword</label>
+            <input type="text" class="input-field" id="primaryKeyword" placeholder="e.g. emergency plumber Austin TX">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Optimization Goal</label>
+            <select class="select-field" id="optimizationGoal">
+              <option value="SEO + CRO Combined">SEO + CRO Combined</option>
+              <option value="Full Rewrite">Full Rewrite</option>
+              <option value="Meta Tags Only">Meta Tags Only</option>
+              <option value="Headline and Intro Only">Headline and Intro Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Page Content <span style="font-weight:400; text-transform:none; letter-spacing:0;">(paste text or HTML)</span></label>
+          <textarea class="textarea-field" id="pageContent" placeholder="Paste the full page content or HTML here..." style="min-height: 200px;"></textarea>
+        </div>
+
+        <!-- Preferences Panel -->
+        <div class="pref-panel">
+          <button class="pref-toggle" id="prefToggle" data-label="Optimizer Preferences">Optimizer Preferences ▾</button>
+          <div class="pref-content" id="prefContent">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Priority Output</label>
+                <select class="select-field" id="priority">
+                  <option value="Quick wins first">Quick wins first</option>
+                  <option value="Comprehensive first">Comprehensive first</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Rewritten Meta Tags</label>
+                <select class="select-field" id="inclMeta">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Rewritten H1 &amp; Intro</label>
+                <select class="select-field" id="inclH1">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Readability Target</label>
+                <select class="select-field" id="readability">
+                  <option value="8th grade">8th grade</option>
+                  <option value="General">General</option>
+                  <option value="Professional">Professional</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <button class="btn-primary" id="generateBtn" style="margin-bottom: 24px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      Analyze and Optimize
+    </button>
+
+    <!-- Output -->
+    <div id="outputSection" style="display:none;">
+      <div class="output-label">Optimization Results</div>
+      <div class="output-block" id="outputBlock">
+        <div class="output-placeholder" id="outputPlaceholder">Analysis will appear here...</div>
+        <pre class="output-content" id="outputContent" style="display:none;"></pre>
+        <button class="copy-btn" id="copyBtn" style="display:none;">Copy</button>
+      </div>
+
+      <div class="feedback-row" id="feedbackRow">
+        <span style="font-size:13px; color:var(--text-secondary);">Was this helpful?</span>
+        <button class="feedback-btn feedback-btn-up" title="Thumbs up">👍</button>
+        <button class="feedback-btn feedback-btn-down" title="Thumbs down">👎</button>
+      </div>
+      <div class="feedback-expand" id="feedbackExpand">
+        <label class="feedback-label">What was wrong?</label>
+        <textarea class="textarea-field feedback-comment" placeholder="Describe the issue..." style="min-height:80px;"></textarea>
+        <button class="btn-ghost btn-sm feedback-send" style="align-self:flex-start;">Send Feedback</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    tools.streamseopros.com · Internal use only
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    var GROQ_KEY = 'asn_groq_key';
+
+    if (!getApiKey(GROQ_KEY)) {
+      document.getElementById('noKeyWarning').style.display = '';
+    }
+
+    initPrefPanel(
+      document.getElementById('prefToggle'),
+      document.getElementById('prefContent')
+    );
+
+    var systemPrompts = {
+      'SEO + CRO Combined': 'You are a senior SEO and conversion rate optimization specialist. Analyze the provided page content and return recommendations in this exact format:\n\nOVERALL ASSESSMENT\n[2–3 sentence summary of the page\'s current state]\n\nPRIORITY SEO FIXES\nFix 1: [specific issue and exact fix]\nFix 2: [specific issue and exact fix]\nFix 3: [specific issue and exact fix]\n[Continue up to 5 fixes]\n\nPRIORITY CRO FIXES\nFix 1: [specific issue and exact fix]\nFix 2: [specific issue and exact fix]\nFix 3: [specific issue and exact fix]\n[Continue up to 5 fixes]\n\nREWRITTEN META TAGS\nTitle: [rewritten title tag, max 60 chars]\nMeta description: [rewritten meta, max 155 chars]\n\nREWRITTEN H1\n[New H1 suggestion]\n\nREWRITTEN INTRO PARAGRAPH\n[Rewritten opening paragraph — clearer, keyword-natural, benefit-led]\n\nQUICK WIN SUMMARY\n[Top 3 things to fix first for fastest impact]\n\nDo not use markdown bold or heading symbols.\nBase all feedback only on the content provided.',
+
+      'Full Rewrite': 'You are a senior SEO copywriter. Rewrite the provided page content in full, optimized for both search and conversions. Return in this exact format:\n\nREWRITTEN PAGE CONTENT\n[Full rewrite here — preserve structure but improve every element: headline, intro, body sections, CTA]\n\nWHAT CHANGED AND WHY\nChange 1: [what + reason]\nChange 2: [what + reason]\n[Continue for all significant changes]\n\nDo not use markdown bold or heading symbols.',
+
+      'Meta Tags Only': 'Return only this, nothing else:\n\nTITLE TAG\n[Rewritten title, max 60 characters, includes primary keyword]\n\nMETA DESCRIPTION\n[Rewritten meta, max 155 characters, includes keyword and CTA]\n\nOG TITLE\n[Open Graph title suggestion]\n\nOG DESCRIPTION\n[Open Graph description suggestion]\n\nDo not use markdown bold or heading symbols.',
+
+      'Headline and Intro Only': 'Return only this, nothing else:\n\nREWRITTEN H1\n[New H1 — natural, keyword-included, benefit-led]\n\nREWRITTEN INTRO PARAGRAPH\n[2–3 sentence intro — hooks the reader, states the benefit, includes the keyword naturally]\n\nWHY THIS WORKS\n[2–3 sentences explaining the changes]\n\nDo not use markdown bold or heading symbols.'
+    };
+
+    document.getElementById('generateBtn').addEventListener('click', generateOptimization);
+
+    async function generateOptimization() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) {
+        showToast('No API key found. Add it on the ASN portal page.');
+        return;
+      }
+
+      var clientName = document.getElementById('clientName').value.trim();
+      var pageType = document.getElementById('pageType').value;
+      var primaryKeyword = document.getElementById('primaryKeyword').value.trim();
+      var optimizationGoal = document.getElementById('optimizationGoal').value;
+      var pageContent = document.getElementById('pageContent').value.trim();
+      var priority = document.getElementById('priority').value;
+      var inclMeta = document.getElementById('inclMeta').value;
+      var inclH1 = document.getElementById('inclH1').value;
+      var readability = document.getElementById('readability').value;
+
+      if (!pageContent) {
+        showToast('Please paste the page content first.');
+        return;
+      }
+      if (!primaryKeyword) {
+        showToast('Please enter the primary keyword.');
+        return;
+      }
+
+      var systemPrompt = systemPrompts[optimizationGoal];
+      var userPrompt = 'Client: ' + (clientName || 'Not specified') + '\nPage Type: ' + pageType + '\nPrimary Keyword: ' + primaryKeyword + '\nOptimization Goal: ' + optimizationGoal + '\nPriority Output: ' + priority + '\nInclude Rewritten Meta Tags: ' + inclMeta + '\nInclude Rewritten H1 and Intro: ' + inclH1 + '\nReadability Target: ' + readability + '\n\nPAGE CONTENT:\n' + pageContent;
+
+      var btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Analyzing...';
+
+      var outputSection = document.getElementById('outputSection');
+      var outputPlaceholder = document.getElementById('outputPlaceholder');
+      var outputContent = document.getElementById('outputContent');
+      var copyBtn = document.getElementById('copyBtn');
+
+      outputSection.style.display = '';
+      outputPlaceholder.style.display = '';
+      outputPlaceholder.style.color = 'var(--text-secondary)';
+      outputPlaceholder.textContent = 'Analysis will appear here...';
+      outputContent.style.display = 'none';
+      copyBtn.style.display = 'none';
+      outputContent.textContent = '';
+
+      try {
+        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.5, 2500);
+        var cleaned = cleanOutput(result);
+        outputContent.textContent = cleaned;
+        outputPlaceholder.style.display = 'none';
+        outputContent.style.display = '';
+        copyBtn.style.display = '';
+      } catch(e) {
+        outputPlaceholder.textContent = 'Error: ' + e.message;
+        outputPlaceholder.style.color = 'var(--danger)';
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Analyze and Optimize';
+
+      initCopyBtn(copyBtn, function() { return outputContent.textContent; });
+    }
+
+    initFeedback(
+      document.getElementById('outputSection'),
+      'asn_feedback',
+      'Page Optimizer',
+      function() { return document.getElementById('outputContent').textContent; }
+    );
+  </script>
+</body>
+</html>

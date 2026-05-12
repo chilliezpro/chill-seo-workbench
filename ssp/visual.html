@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Content Studio — SSP Content Engine</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  </style>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="rgba(108,99,255,0.2)"/>
+        <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6-2.686 6-6 6" stroke="#6c63ff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="14" cy="14" r="2.5" fill="#6c63ff"/>
+      </svg>
+      Stream <span>SEO Pros</span>
+    </div>
+    <a href="index.html" class="back-nav" style="margin-bottom:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      SSP Content Engine
+    </a>
+  </header>
+
+  <div class="container-wide">
+
+    <div class="warning-banner" id="noKeyWarning" style="display:none;">
+      No Groq API key found. <a href="index.html">Go back and add your key</a> before generating.
+    </div>
+
+    <div style="margin-bottom: 8px;">
+      <h1 class="page-title">Visual Content Studio</h1>
+    </div>
+    <p style="color:var(--text-secondary); font-size:14px; margin-bottom:28px;">Three modes: generate visuals and captions from scratch from any page, turn existing captions into optimized graphic briefs, or create a full GBP post pack with link wheeling — up to 5 daily posts, each with a matching graphic brief.</p>
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs" id="modeTabs">
+      <button class="mode-tab active" data-mode="1">Generate from Page</button>
+      <button class="mode-tab" data-mode="2">Brief from Existing Caption</button>
+      <button class="mode-tab" data-mode="3">GBP Post Pack with Link Wheeling</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         MODE 1 — Generate from Page
+    ═══════════════════════════════════════════════ -->
+    <div id="mode1" class="mode-panel">
+
+      <div class="card section-gap">
+        <div class="form-stack">
+
+          <div class="form-group">
+            <label class="form-label">Source URL</label>
+            <div class="url-row">
+              <input type="url" class="input-field" id="m1SourceUrl" placeholder="https://client.com/service-page">
+              <button class="btn-primary btn-sm" id="m1FetchBtn">Fetch Page</button>
+            </div>
+            <div class="status-indicator" id="m1FetchStatus"></div>
+          </div>
+
+          <button class="source-toggle-link" id="m1PasteToggle">+ Paste content manually instead</button>
+          <div id="m1PasteArea" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">Page Content</label>
+              <textarea class="textarea-field" id="m1ManualContent" placeholder="Paste page text..." style="min-height:140px;"></textarea>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Business Type</label>
+              <select class="select-field" id="m1BusinessType">
+                <option value="Auto-detect">Auto-detect</option>
+                <option value="Law Firm">Law Firm</option>
+                <option value="Home Services">Home Services</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tone</label>
+              <select class="select-field" id="m1Tone">
+                <option value="Auto-detect">Auto-detect</option>
+                <option value="Professional">Professional</option>
+                <option value="Friendly">Friendly</option>
+                <option value="Urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Preferences -->
+          <div class="pref-panel">
+            <button class="pref-toggle" id="m1PrefToggle" data-label="Visual Preferences">Visual Preferences ▾</button>
+            <div class="pref-content" id="m1PrefContent">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Number of Concepts</label>
+                  <div class="radio-group" id="m1ConceptCount">
+                    <button class="radio-btn active" data-value="1">1</button>
+                    <button class="radio-btn" data-value="2">2</button>
+                    <button class="radio-btn" data-value="3">3</button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Format</label>
+                  <select class="select-field" id="m1Format">
+                    <option value="Square 1:1">Square 1:1</option>
+                    <option value="Portrait 4:5">Portrait 4:5</option>
+                    <option value="Story 9:16">Story 9:16</option>
+                    <option value="Landscape 16:9">Landscape 16:9</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Style</label>
+                  <select class="select-field" id="m1Style">
+                    <option value="Clean minimal">Clean minimal</option>
+                    <option value="Bold text-heavy">Bold text-heavy</option>
+                    <option value="Photo-realistic">Photo-realistic</option>
+                    <option value="Illustrated">Illustrated</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Include Caption with Visual</label>
+                  <select class="select-field" id="m1InclCaption">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group" id="m1PlatformGroup">
+                <label class="form-label">Platform (for caption)</label>
+                <select class="select-field" id="m1Platform">
+                  <option value="Instagram">Instagram</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="btn-primary" id="m1GenerateBtn" style="margin-bottom: 24px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        Generate Visual Package
+      </button>
+
+      <div id="m1OutputArea"></div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         MODE 2 — Brief from Existing Caption
+    ═══════════════════════════════════════════════ -->
+    <div id="mode2" class="mode-panel" style="display:none;">
+
+      <div class="card section-gap">
+        <div class="form-stack">
+
+          <div class="form-group">
+            <label class="form-label">Existing Caption</label>
+            <textarea class="textarea-field" id="m2Caption" placeholder="Paste the existing caption here..." style="min-height:160px;"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Business Type</label>
+              <select class="select-field" id="m2BusinessType">
+                <option value="Auto-detect">Auto-detect</option>
+                <option value="Law Firm">Law Firm</option>
+                <option value="Home Services">Home Services</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Format</label>
+              <select class="select-field" id="m2Format">
+                <option value="Square 1:1">Square 1:1</option>
+                <option value="Portrait 4:5">Portrait 4:5</option>
+                <option value="Story 9:16">Story 9:16</option>
+                <option value="Landscape 16:9">Landscape 16:9</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Style</label>
+              <select class="select-field" id="m2Style">
+                <option value="Clean minimal">Clean minimal</option>
+                <option value="Bold text-heavy">Bold text-heavy</option>
+                <option value="Photo-realistic">Photo-realistic</option>
+                <option value="Illustrated">Illustrated</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Number of Concepts</label>
+              <div class="radio-group" id="m2ConceptCount" style="margin-top:6px;">
+                <button class="radio-btn active" data-value="1">1</button>
+                <button class="radio-btn" data-value="2">2</button>
+                <button class="radio-btn" data-value="3">3</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="btn-primary" id="m2GenerateBtn" style="margin-bottom: 24px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        Generate Graphic Brief
+      </button>
+
+      <div id="m2OutputArea"></div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         MODE 3 — GBP Post Pack with Link Wheeling
+    ═══════════════════════════════════════════════ -->
+    <div id="mode3" class="mode-panel" style="display:none;">
+
+      <div class="card section-gap">
+        <div class="form-stack">
+
+          <div class="form-group">
+            <label class="form-label">Hub Page URL <span style="font-weight:400;text-transform:none;letter-spacing:0;">(main website or GBP — center of the wheel)</span></label>
+            <div class="url-row">
+              <input type="url" class="input-field" id="m3HubUrl" placeholder="https://client.com">
+              <button class="btn-primary btn-sm" id="m3FetchBtn">Fetch Hub</button>
+            </div>
+            <div class="status-indicator" id="m3FetchStatus"></div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Number of Posts</label>
+              <select class="select-field" id="m3PostCount">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Business Type</label>
+              <select class="select-field" id="m3BusinessType">
+                <option value="Auto-detect">Auto-detect</option>
+                <option value="Law Firm">Law Firm</option>
+                <option value="Home Services">Home Services</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tone</label>
+            <select class="select-field" id="m3Tone" style="max-width:260px;">
+              <option value="Auto-detect">Auto-detect</option>
+              <option value="Professional">Professional</option>
+              <option value="Friendly">Friendly</option>
+              <option value="Urgent">Urgent</option>
+            </select>
+          </div>
+
+          <!-- Spoke URLs (dynamic) -->
+          <div id="m3SpokeFields">
+            <label class="form-label" style="display:block; margin-bottom:10px;">Spoke URLs <span style="font-weight:400;text-transform:none;letter-spacing:0;">(link embedded in each post)</span></label>
+            <div class="form-stack" id="m3SpokeList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Preferences -->
+          <div class="pref-panel">
+            <button class="pref-toggle" id="m3PrefToggle" data-label="Post Preferences">Post Preferences ▾</button>
+            <div class="pref-content" id="m3PrefContent">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Post Length</label>
+                  <select class="select-field" id="m3PostLength">
+                    <option value="Short 100-150 words">Short 100–150 words</option>
+                    <option value="Standard 150-250 words" selected>Standard 150–250 words</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">CTA Type</label>
+                  <select class="select-field" id="m3CtaType">
+                    <option value="Call now">Call now</option>
+                    <option value="Visit website">Visit website</option>
+                    <option value="Book free estimate">Book free estimate</option>
+                    <option value="Get directions">Get directions</option>
+                    <option value="Learn more">Learn more</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Include Graphic Brief Per Post</label>
+                  <select class="select-field" id="m3InclGraphic">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Graphic Format</label>
+                  <select class="select-field" id="m3GraphicFormat">
+                    <option value="Square 1:1">Square 1:1</option>
+                    <option value="Portrait 4:5">Portrait 4:5</option>
+                    <option value="Story 9:16">Story 9:16</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Graphic Style</label>
+                <select class="select-field" id="m3GraphicStyle" style="max-width:260px;">
+                  <option value="Clean minimal">Clean minimal</option>
+                  <option value="Bold text-heavy">Bold text-heavy</option>
+                  <option value="Photo-realistic">Photo-realistic</option>
+                  <option value="Illustrated">Illustrated</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="progress-text" id="m3Progress"></div>
+
+      <button class="btn-primary" id="m3GenerateBtn" style="margin-bottom: 24px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Generate GBP Post Pack
+      </button>
+
+      <div id="m3OutputArea"></div>
+
+    </div>
+
+  </div><!-- /container-wide -->
+
+  <footer class="site-footer">
+    tools.streamseopros.com · Internal use only
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    var GROQ_KEY = 'ssp_groq_key';
+
+    if (!getApiKey(GROQ_KEY)) {
+      document.getElementById('noKeyWarning').style.display = '';
+    }
+
+    // ── Mode Tabs ────────────────────────────────────────────────
+    var activeMode = '1';
+    document.getElementById('modeTabs').addEventListener('click', function(e) {
+      var tab = e.target.closest('.mode-tab');
+      if (!tab) return;
+      document.querySelectorAll('#modeTabs .mode-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      activeMode = tab.dataset.mode;
+      document.querySelectorAll('.mode-panel').forEach(function(p) { p.style.display = 'none'; });
+      document.getElementById('mode' + activeMode).style.display = '';
+    });
+
+    // ── Mode 1 ───────────────────────────────────────────────────
+    var m1PageText = '';
+
+    initPrefPanel(document.getElementById('m1PrefToggle'), document.getElementById('m1PrefContent'));
+    initRadioGroup(document.getElementById('m1ConceptCount'));
+
+    var m1PasteVisible = false;
+    document.getElementById('m1PasteToggle').addEventListener('click', function() {
+      m1PasteVisible = !m1PasteVisible;
+      document.getElementById('m1PasteArea').style.display = m1PasteVisible ? '' : 'none';
+      this.textContent = m1PasteVisible ? '− Hide manual paste' : '+ Paste content manually instead';
+    });
+
+    document.getElementById('m1FetchBtn').addEventListener('click', async function() {
+      var url = document.getElementById('m1SourceUrl').value.trim();
+      if (!url) { showToast('Enter a URL first.'); return; }
+      var status = document.getElementById('m1FetchStatus');
+      status.className = 'status-indicator';
+      status.textContent = 'Fetching...';
+      this.disabled = true;
+      try {
+        var text = await fetchPageText(url);
+        m1PageText = text;
+        var preview = text.substring(0, 60).replace(/\n/g, ' ');
+        status.className = 'status-indicator success';
+        status.textContent = 'Page loaded: ' + preview + '...';
+        showToast('Page fetched.');
+      } catch(e) {
+        status.className = 'status-indicator error';
+        status.textContent = 'Fetch failed: ' + e.message;
+        m1PageText = '';
+      }
+      this.disabled = false;
+    });
+
+    document.getElementById('m1GenerateBtn').addEventListener('click', generateMode1);
+
+    async function generateMode1() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('No API key found.'); return; }
+
+      var manual = document.getElementById('m1ManualContent').value.trim();
+      var content = manual || m1PageText;
+      if (!content) { showToast('Fetch a page or paste content first.'); return; }
+
+      var businessType = document.getElementById('m1BusinessType').value;
+      var tone = document.getElementById('m1Tone').value;
+      var conceptCount = parseInt(getRadioValue(document.getElementById('m1ConceptCount')) || '1');
+      var format = document.getElementById('m1Format').value;
+      var style = document.getElementById('m1Style').value;
+      var inclCaption = document.getElementById('m1InclCaption').value;
+      var platform = document.getElementById('m1Platform').value;
+
+      var systemPrompt = 'You are an art director and social media strategist for a white-label SEO agency. Generate visual content briefs for graphic designers and video editors. Use only facts from the source page. Never invent.\n\nFor each concept, return in EXACTLY this format.\nDo not use ** or # symbols.\n\nCONCEPT [number]\n\nSCENE\n[Specific visual — who, where, what action, setting. Be specific to this business. No generic stock images.]\n\nTEXT OVERLAY\n[Headline for the graphic — max 8 words]\n\nSUBTEXT\n[Supporting line — max 12 words, optional]\n\nMOOD AND COLOR\n[Mood description and color direction]\n\nFORMAT\n[' + format + ']\n\nSTYLE\n[' + style + ']\n\nSTOCK SEARCH KEYWORDS\n1. [keyword]\n2. [keyword]\n3. [keyword]\n4. [keyword]\n5. [keyword]\n\nCAPTION\n[Only if Include caption = ' + inclCaption + ': platform-appropriate caption for this visual, 3-5 lines, ends with CTA from page. Platform: ' + platform + ']';
+
+      var userPrompt = 'Business Type: ' + businessType + '\nTone: ' + tone + '\nNumber of concepts: ' + conceptCount + '\nFormat: ' + format + '\nStyle: ' + style + '\nInclude caption: ' + inclCaption + '\nPlatform: ' + platform + '\n\nPAGE CONTENT:\n' + content;
+
+      var btn = document.getElementById('m1GenerateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+      var outputArea = document.getElementById('m1OutputArea');
+      outputArea.innerHTML = '';
+
+      try {
+        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2500);
+        var cleaned = cleanOutput(result);
+        renderConceptOutputs(outputArea, cleaned, conceptCount, 'm1', 'ssp_feedback', 'Visual - Generate from Page');
+      } catch(e) {
+        outputArea.innerHTML = '<div class="warning-banner">' + e.message + '</div>';
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Generate Visual Package';
+    }
+
+    // ── Mode 2 ───────────────────────────────────────────────────
+    initRadioGroup(document.getElementById('m2ConceptCount'));
+
+    document.getElementById('m2GenerateBtn').addEventListener('click', generateMode2);
+
+    async function generateMode2() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('No API key found.'); return; }
+
+      var caption = document.getElementById('m2Caption').value.trim();
+      if (!caption) { showToast('Paste an existing caption first.'); return; }
+
+      var businessType = document.getElementById('m2BusinessType').value;
+      var format = document.getElementById('m2Format').value;
+      var style = document.getElementById('m2Style').value;
+      var conceptCount = parseInt(getRadioValue(document.getElementById('m2ConceptCount')) || '1');
+
+      var systemPrompt = 'You are an art director. A caption has already been written. Your job is to create a graphic brief that matches the caption exactly — the visual must reinforce what the caption says, not contradict or ignore it.\n\nRead the caption carefully. Extract the core message, the tone, the subject, and the implied CTA.\n\nFor each concept, return in EXACTLY this format.\nDo not use ** or # symbols.\n\nCONCEPT [number]\n\nCAPTION CORE MESSAGE\n[One sentence: what is this caption actually about?]\n\nSCENE\n[Visual that directly matches the caption\'s message. Specific — no generic stock.]\n\nTEXT OVERLAY\n[Pulled from or inspired by the caption — max 8 words]\n\nSUBTEXT\n[Supporting line — max 12 words]\n\nMOOD AND COLOR\n[Match the tone of the caption]\n\nFORMAT\n[' + format + ']\n\nSTYLE\n[' + style + ']\n\nSTOCK SEARCH KEYWORDS\n1. [keyword]\n2. [keyword]\n3. [keyword]\n4. [keyword]\n5. [keyword]\n\nALIGNMENT NOTE\n[One sentence confirming how this visual connects to the caption — so the designer understands the intent before starting]';
+
+      var userPrompt = 'Business Type: ' + businessType + '\nNumber of concepts: ' + conceptCount + '\nFormat: ' + format + '\nStyle: ' + style + '\n\nCAPTION:\n' + caption;
+
+      var btn = document.getElementById('m2GenerateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+      var outputArea = document.getElementById('m2OutputArea');
+      outputArea.innerHTML = '';
+
+      try {
+        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2000);
+        var cleaned = cleanOutput(result);
+        renderConceptOutputs(outputArea, cleaned, conceptCount, 'm2', 'ssp_feedback', 'Visual - Brief from Caption');
+      } catch(e) {
+        outputArea.innerHTML = '<div class="warning-banner">' + e.message + '</div>';
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Generate Graphic Brief';
+    }
+
+    // ── Mode 3 ───────────────────────────────────────────────────
+    var m3HubText = '';
+
+    initPrefPanel(document.getElementById('m3PrefToggle'), document.getElementById('m3PrefContent'));
+
+    // Build spoke fields on post count change
+    function buildSpokeFields(count) {
+      var list = document.getElementById('m3SpokeList');
+      list.innerHTML = '';
+      for (var i = 1; i <= count; i++) {
+        var group = document.createElement('div');
+        group.className = 'form-group';
+        group.innerHTML = '<label class="form-label">Spoke ' + i + '</label><input type="url" class="input-field" id="m3Spoke' + i + '" placeholder="https://client.com/service-page">';
+        list.appendChild(group);
+      }
+    }
+
+    buildSpokeFields(3);
+
+    document.getElementById('m3PostCount').addEventListener('change', function() {
+      buildSpokeFields(parseInt(this.value));
+    });
+
+    document.getElementById('m3FetchBtn').addEventListener('click', async function() {
+      var url = document.getElementById('m3HubUrl').value.trim();
+      if (!url) { showToast('Enter the hub URL first.'); return; }
+      var status = document.getElementById('m3FetchStatus');
+      status.className = 'status-indicator';
+      status.textContent = 'Fetching...';
+      this.disabled = true;
+      try {
+        var text = await fetchPageText(url);
+        m3HubText = text;
+        var preview = text.substring(0, 60).replace(/\n/g, ' ');
+        status.className = 'status-indicator success';
+        status.textContent = 'Hub loaded: ' + preview + '...';
+        showToast('Hub page fetched.');
+      } catch(e) {
+        status.className = 'status-indicator error';
+        status.textContent = 'Fetch failed: ' + e.message;
+        m3HubText = '';
+      }
+      this.disabled = false;
+    });
+
+    document.getElementById('m3GenerateBtn').addEventListener('click', generateMode3);
+
+    async function generateMode3() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('No API key found.'); return; }
+      if (!m3HubText) { showToast('Fetch the hub page first.'); return; }
+
+      var postCount = parseInt(document.getElementById('m3PostCount').value);
+      var businessType = document.getElementById('m3BusinessType').value;
+      var tone = document.getElementById('m3Tone').value;
+      var postLength = document.getElementById('m3PostLength').value;
+      var ctaType = document.getElementById('m3CtaType').value;
+      var inclGraphic = document.getElementById('m3InclGraphic').value;
+      var graphicFormat = document.getElementById('m3GraphicFormat').value;
+      var graphicStyle = document.getElementById('m3GraphicStyle').value;
+
+      var systemPrompt = 'You are a local SEO specialist and GBP content strategist. Generate a pack of Google Business Profile posts for a local business using the link wheeling technique — each post links to a different page on the site, creating a network of links that distributes authority and covers multiple topics.\n\nRules:\n- Use only facts from the hub page content provided.\n- Each post must have a different angle — no repetition.\n- Naturally weave in the business location and primary service. No keyword stuffing.\n- Each post links to its assigned spoke URL.\n- Write as if the business owner is speaking directly to a local customer.\n- Do not use ** or # symbols anywhere.\n\nFor each post, return in EXACTLY this format:\n\nPOST [number]\n\nANGLE\n[One label describing this post\'s focus, e.g. Service Spotlight / Trust Builder / Local Story / Seasonal Tip / Client Win / FAQ Answer]\n\nGBP POST COPY\n[Full post body — length matches preference: ' + postLength + '.\nOpen with a local hook. Include one concrete benefit.\nMention the business location naturally.\nEnd with the CTA type selected: ' + ctaType + '.]\n\nLINK TO EMBED\n[Spoke URL for this post]\n\nWHY THIS ANGLE\n[One sentence: why this angle was chosen and how it differs from the other posts in the pack]\n\nGRAPHIC BRIEF\n[Only if Include graphic brief = ' + inclGraphic + ':\nSCENE: [specific visual]\nTEXT OVERLAY: [max 8 words]\nMOOD AND COLOR: [description]\nFORMAT: [' + graphicFormat + ']\nSTYLE: [' + graphicStyle + ']\nSTOCK KEYWORDS: 1. 2. 3. 4. 5.]';
+
+      var btn = document.getElementById('m3GenerateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+      var outputArea = document.getElementById('m3OutputArea');
+      outputArea.innerHTML = '';
+      var progress = document.getElementById('m3Progress');
+
+      // Collect spoke URLs
+      var spokeUrls = [];
+      for (var i = 1; i <= postCount; i++) {
+        var el = document.getElementById('m3Spoke' + i);
+        spokeUrls.push(el ? el.value.trim() : '');
+      }
+
+      // Generate posts sequentially
+      for (var p = 1; p <= postCount; p++) {
+        progress.textContent = 'Generating post ' + p + ' of ' + postCount + '...';
+
+        var userPrompt = 'Business Type: ' + businessType + '\nTone: ' + tone + '\nPost number: ' + p + ' of ' + postCount + '\nSpoke URL for this post: ' + (spokeUrls[p-1] || 'Not provided') + '\nPost length: ' + postLength + '\nCTA type: ' + ctaType + '\nInclude graphic brief: ' + inclGraphic + '\nGraphic format: ' + graphicFormat + '\nGraphic style: ' + graphicStyle + '\n\nHUB PAGE CONTENT:\n' + m3HubText;
+
+        // Build per-post output block
+        var postDiv = document.createElement('div');
+        postDiv.style.marginBottom = '24px';
+
+        var labelDiv = document.createElement('div');
+        labelDiv.className = 'output-label';
+        labelDiv.id = 'm3PostLabel' + p;
+        labelDiv.textContent = 'POST ' + p;
+        postDiv.appendChild(labelDiv);
+
+        var block = document.createElement('div');
+        block.className = 'output-block';
+
+        var placeholder = document.createElement('div');
+        placeholder.className = 'output-placeholder';
+        placeholder.textContent = 'Generating...';
+        block.appendChild(placeholder);
+
+        var pre = document.createElement('pre');
+        pre.className = 'output-content';
+        pre.style.display = 'none';
+        block.appendChild(pre);
+
+        var copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.textContent = 'Copy';
+        copyBtn.style.display = 'none';
+        block.appendChild(copyBtn);
+
+        postDiv.appendChild(block);
+
+        // Feedback
+        var fbRow = document.createElement('div');
+        fbRow.className = 'feedback-row';
+        fbRow.innerHTML = '<span style="font-size:13px;color:var(--text-secondary);">Was this helpful?</span><button class="feedback-btn feedback-btn-up">👍</button><button class="feedback-btn feedback-btn-down">👎</button>';
+        postDiv.appendChild(fbRow);
+
+        var fbExpand = document.createElement('div');
+        fbExpand.className = 'feedback-expand';
+        fbExpand.innerHTML = '<label class="feedback-label">What was wrong?</label><textarea class="textarea-field feedback-comment" placeholder="Describe the issue..." style="min-height:80px;"></textarea><button class="btn-ghost btn-sm feedback-send" style="align-self:flex-start;">Send Feedback</button>';
+        postDiv.appendChild(fbExpand);
+
+        outputArea.appendChild(postDiv);
+
+        try {
+          var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2000);
+          var cleaned = cleanOutput(result);
+
+          // Extract angle label for post title
+          var angleMatch = cleaned.match(/ANGLE\s*\n([^\n]+)/);
+          if (angleMatch) {
+            labelDiv.textContent = 'POST ' + p + ' — ' + angleMatch[1].trim();
+          }
+
+          pre.textContent = cleaned;
+          placeholder.style.display = 'none';
+          pre.style.display = '';
+          copyBtn.style.display = '';
+
+          (function(btn, getContent) {
+            initCopyBtn(btn, getContent);
+          })(copyBtn, (function(preEl) {
+            return function() { return preEl.textContent; };
+          })(pre));
+
+          initFeedback(postDiv, 'ssp_feedback', 'GBP Post Pack - Post ' + p, (function(preEl) {
+            return function() { return preEl.textContent; };
+          })(pre));
+
+        } catch(e) {
+          placeholder.textContent = 'Error: ' + e.message;
+          placeholder.style.color = 'var(--danger)';
+        }
+      }
+
+      progress.textContent = 'All ' + postCount + ' posts generated.';
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate GBP Post Pack';
+    }
+
+    // ── Shared: render concept output blocks ─────────────────────
+
+    function renderConceptOutputs(container, fullText, count, prefix, fbKey, toolName) {
+      container.innerHTML = '';
+
+      if (count === 1) {
+        // Single output block
+        var block = document.createElement('div');
+        block.innerHTML = buildOutputBlockHTML(prefix + 'Out1');
+        container.appendChild(block.firstElementChild);
+
+        var pre = document.getElementById(prefix + 'Out1Pre');
+        var ph = document.getElementById(prefix + 'Out1Ph');
+        var cb = document.getElementById(prefix + 'Out1Copy');
+
+        pre.textContent = fullText;
+        ph.style.display = 'none';
+        pre.style.display = '';
+        cb.style.display = '';
+        initCopyBtn(cb, function() { return pre.textContent; });
+
+        var fbWrapper = buildFeedbackHTML(prefix + 'Out1Fb');
+        container.appendChild(fbWrapper);
+        initFeedback(fbWrapper, fbKey, toolName, function() { return pre.textContent; });
+
+      } else {
+        // Split by CONCEPT markers
+        var parts = fullText.split(/(?=CONCEPT\s+\d)/);
+        parts = parts.filter(function(p) { return p.trim().length > 0; });
+
+        for (var i = 0; i < parts.length; i++) {
+          var id = prefix + 'Out' + (i+1);
+          var wrapper = document.createElement('div');
+          wrapper.style.marginBottom = '24px';
+
+          var labelEl = document.createElement('div');
+          labelEl.className = 'output-label';
+          labelEl.textContent = 'Concept ' + (i+1);
+          wrapper.appendChild(labelEl);
+
+          var blockEl = document.createElement('div');
+          blockEl.className = 'output-block';
+
+          var phEl = document.createElement('div');
+          phEl.className = 'output-placeholder';
+          blockEl.appendChild(phEl);
+
+          var preEl = document.createElement('pre');
+          preEl.className = 'output-content';
+          preEl.textContent = parts[i].trim();
+          blockEl.appendChild(preEl);
+
+          var cbEl = document.createElement('button');
+          cbEl.className = 'copy-btn';
+          cbEl.textContent = 'Copy';
+          blockEl.appendChild(cbEl);
+
+          phEl.style.display = 'none';
+          preEl.style.display = '';
+          cbEl.style.display = '';
+
+          wrapper.appendChild(blockEl);
+          container.appendChild(wrapper);
+
+          (function(btn, preRef) {
+            initCopyBtn(btn, function() { return preRef.textContent; });
+          })(cbEl, preEl);
+
+          var fbWrapper = buildFeedbackHTML(id + 'Fb');
+          container.appendChild(fbWrapper);
+          (function(fbEl, preRef, idx) {
+            initFeedback(fbEl, fbKey, toolName + ' Concept ' + (idx+1), function() { return preRef.textContent; });
+          })(fbWrapper, preEl, i);
+        }
+      }
+    }
+
+    function buildOutputBlockHTML(id) {
+      return '<div style="margin-bottom:24px;"><div class="output-block"><div class="output-placeholder" id="' + id + 'Ph">Output will appear here...</div><pre class="output-content" id="' + id + 'Pre" style="display:none;"></pre><button class="copy-btn" id="' + id + 'Copy" style="display:none;">Copy</button></div></div>';
+    }
+
+    function buildFeedbackHTML(id) {
+      var div = document.createElement('div');
+      div.innerHTML = '<div class="feedback-row"><span style="font-size:13px;color:var(--text-secondary);">Was this helpful?</span><button class="feedback-btn feedback-btn-up">👍</button><button class="feedback-btn feedback-btn-down">👎</button></div><div class="feedback-expand"><label class="feedback-label">What was wrong?</label><textarea class="textarea-field feedback-comment" placeholder="Describe the issue..." style="min-height:80px;"></textarea><button class="btn-ghost btn-sm feedback-send" style="align-self:flex-start;">Send Feedback</button></div>';
+      return div;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Optimizer — ASN Workbench</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --surface-2: #21253a;
+      --border: #2a2d3a; --accent: #6c63ff; --accent-hover: #857dff;
+      --text-primary: #f0f0f5; --text-secondary: #8b8fa8;
+      --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
+      --radius: 10px; --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    body { padding-bottom: 60px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div>
+          <a href="index.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            ASN Workbench
+          </a>
+          <div class="page-title" style="margin-top:6px;">Page Optimizer</div>
+          <div class="page-subtitle">Get combined SEO + CRO recommendations, meta rewrites, and priority fixes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Warning -->
+    <div class="api-warning" id="apiWarning" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      No Groq API key found. <a href="index.html" style="color:var(--danger); text-decoration:underline;">Add your key in the portal</a> before generating.
+    </div>
+
+    <!-- Input Card -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="section-heading">Page Details</div>
+
+      <div class="two-col">
+        <div class="field-group">
+          <label class="field-label" for="clientName">Client Name</label>
+          <input type="text" id="clientName" class="input-field" placeholder="Acme Plumbing Co." />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="pageType">Page Type</label>
+          <select id="pageType" class="select-field">
+            <option value="Homepage">Homepage</option>
+            <option value="Service Page" selected>Service Page</option>
+            <option value="Location Page">Location Page</option>
+            <option value="Blog Post">Blog Post</option>
+            <option value="About Page">About Page</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field-group">
+          <label class="field-label" for="primaryKw">Primary Keyword</label>
+          <input type="text" id="primaryKw" class="input-field" placeholder="plumber in Austin TX" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="optGoal">Optimization Goal</label>
+          <select id="optGoal" class="select-field">
+            <option value="seo_cro">SEO + CRO Combined</option>
+            <option value="full_rewrite">Full Rewrite</option>
+            <option value="meta_only">Meta Tags Only</option>
+            <option value="headline_intro">Headline and Intro Only</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="pageContent">Page Content <span style="font-weight:400; text-transform:none;">(paste or type)</span></label>
+        <textarea id="pageContent" class="textarea-field" rows="10" placeholder="Paste your page content here — body text, headings, CTAs, etc."></textarea>
+      </div>
+
+      <!-- Preferences Panel -->
+      <div class="pref-panel">
+        <button class="pref-toggle" id="prefToggle">Optimization Preferences ▾</button>
+        <div class="pref-content hidden" id="prefContent">
+          <div class="field-group">
+            <label class="field-label">Priority Output</label>
+            <select id="prefPriority" class="select-field">
+              <option value="Quick wins first">Quick wins first</option>
+              <option value="Comprehensive first">Comprehensive first</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Include Rewritten Meta Tags</label>
+            <select id="prefMeta" class="select-field">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Include Rewritten H1 and Intro</label>
+            <select id="prefH1" class="select-field">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Readability Target</label>
+            <select id="prefReadability" class="select-field">
+              <option value="8th grade">8th grade</option>
+              <option value="General">General</option>
+              <option value="Professional">Professional</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button class="btn-primary" id="generateBtn">
+          <span id="btnSpinner" class="spinner" style="display:none;"></span>
+          Analyze and Optimize
+        </button>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div>
+      <div class="output-block">
+        <div class="output-placeholder" id="outputPlaceholder">Output will appear here.</div>
+        <button class="copy-btn" id="copyBtn" style="display:none;">Copy</button>
+        <div class="output-text" id="outputText" style="display:none;"></div>
+      </div>
+      <div class="feedback-row" id="feedbackRow" style="display:none;">
+        <span class="feedback-label">Was this helpful?</span>
+        <button class="feedback-btn feedback-up">👍</button>
+        <button class="feedback-btn feedback-down">👎</button>
+        <div class="feedback-detail">
+          <textarea class="textarea-field feedback-textarea" rows="2" placeholder="What was wrong?"></textarea>
+          <button class="btn-ghost btn-sm feedback-send">Send feedback</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    const GROQ_KEY = 'asn_groq_key';
+
+    requireApiKey(GROQ_KEY, 'apiWarning');
+
+    /* ── Pref Panel ── */
+    document.getElementById('prefToggle').addEventListener('click', function() {
+      var c = document.getElementById('prefContent');
+      c.classList.toggle('hidden');
+      this.textContent = c.classList.contains('hidden') ? 'Optimization Preferences ▾' : 'Optimization Preferences ▴';
+    });
+
+    /* ── System Prompts ── */
+    var SYSTEM_PROMPTS = {
+      seo_cro: 'You are a senior SEO and conversion rate optimization specialist. Analyze the provided page content and return recommendations in this exact format:\n\nOVERALL ASSESSMENT\n[2-3 sentence summary of the page\'s current state]\n\nPRIORITY SEO FIXES\nFix 1: [specific issue and exact fix]\nFix 2: [specific issue and exact fix]\nFix 3: [specific issue and exact fix]\nFix 4: [specific issue and exact fix]\nFix 5: [specific issue and exact fix]\n\nPRIORITY CRO FIXES\nFix 1: [specific issue and exact fix]\nFix 2: [specific issue and exact fix]\nFix 3: [specific issue and exact fix]\nFix 4: [specific issue and exact fix]\nFix 5: [specific issue and exact fix]\n\nREWRITTEN META TAGS\nTitle: [rewritten title tag, max 60 chars]\nMeta description: [rewritten meta, max 155 chars]\n\nREWRITTEN H1\n[New H1 suggestion]\n\nREWRITTEN INTRO PARAGRAPH\n[Rewritten opening paragraph - clearer, keyword-natural, benefit-led]\n\nQUICK WIN SUMMARY\n[Top 3 things to fix first for fastest impact]\n\nDo not use markdown bold or heading symbols.\nBase all feedback only on the content provided.',
+
+      full_rewrite: 'You are a senior SEO copywriter. Rewrite the provided page content in full, optimized for both search and conversions. Return in this exact format:\n\nREWRITTEN PAGE CONTENT\n[Full rewrite here - preserve structure but improve every element: headline, intro, body sections, CTA]\n\nWHAT CHANGED AND WHY\nChange 1: [what + reason]\nChange 2: [what + reason]\nChange 3: [what + reason]\nChange 4: [what + reason]\nChange 5: [what + reason]\n\nDo not use markdown bold or heading symbols.',
+
+      meta_only: 'Return only this, nothing else:\n\nTITLE TAG\n[Rewritten title, max 60 characters, includes primary keyword]\n\nMETA DESCRIPTION\n[Rewritten meta, max 155 characters, includes keyword and CTA]\n\nOG TITLE\n[Open Graph title suggestion]\n\nOG DESCRIPTION\n[Open Graph description suggestion]\n\nDo not use markdown bold or heading symbols.',
+
+      headline_intro: 'Return only this, nothing else:\n\nREWRITTEN H1\n[New H1 - natural, keyword-included, benefit-led]\n\nREWRITTEN INTRO PARAGRAPH\n[2-3 sentence intro - hooks the reader, states the benefit, includes the keyword naturally]\n\nWHY THIS WORKS\n[2-3 sentences explaining the changes]\n\nDo not use markdown bold or heading symbols.'
+    };
+
+    /* ── Copy Button ── */
+    document.getElementById('copyBtn').addEventListener('click', function() {
+      var text = document.getElementById('outputText').textContent;
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(function() {
+        document.getElementById('copyBtn').textContent = 'Copied ✓';
+        document.getElementById('copyBtn').classList.add('copied');
+        setTimeout(function() {
+          document.getElementById('copyBtn').textContent = 'Copy';
+          document.getElementById('copyBtn').classList.remove('copied');
+        }, 2000);
+      });
+    });
+
+    /* ── Generate ── */
+    document.getElementById('generateBtn').addEventListener('click', async function() {
+      var apiKey  = getApiKey(GROQ_KEY);
+      if (!apiKey) { showToast('Add your Groq API key first.', 'error'); return; }
+
+      var client      = document.getElementById('clientName').value.trim();
+      var pageType    = document.getElementById('pageType').value;
+      var primaryKw   = document.getElementById('primaryKw').value.trim();
+      var optGoal     = document.getElementById('optGoal').value;
+      var pageContent = document.getElementById('pageContent').value.trim();
+      var priority    = document.getElementById('prefPriority').value;
+      var readability = document.getElementById('prefReadability').value;
+
+      if (!primaryKw)   { showToast('Primary keyword is required.', 'error'); return; }
+      if (!pageContent) { showToast('Paste the page content before generating.', 'error'); return; }
+
+      var btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      document.getElementById('btnSpinner').style.display = 'inline-block';
+
+      document.getElementById('outputPlaceholder').style.display = 'block';
+      document.getElementById('outputPlaceholder').innerHTML = '<span class="spinner"></span> Analyzing your page...';
+      document.getElementById('outputText').style.display = 'none';
+      document.getElementById('copyBtn').style.display = 'none';
+      document.getElementById('feedbackRow').style.display = 'none';
+
+      var systemPrompt = SYSTEM_PROMPTS[optGoal];
+      var userPrompt = 'Client: ' + (client || 'Not specified') +
+        '\nPage type: ' + pageType +
+        '\nPrimary keyword: ' + primaryKw +
+        '\nPriority output preference: ' + priority +
+        '\nReadability target: ' + readability +
+        '\n\nPAGE CONTENT:\n' + pageContent;
+
+      try {
+        var result  = await callGroq(apiKey, systemPrompt, userPrompt, 0.5, 2500);
+        var cleaned = cleanOutput(result);
+
+        document.getElementById('outputPlaceholder').style.display = 'none';
+        document.getElementById('outputText').style.display = 'block';
+        document.getElementById('outputText').textContent = cleaned;
+        document.getElementById('copyBtn').style.display = 'block';
+        document.getElementById('feedbackRow').style.display = 'flex';
+
+        initFeedback(
+          document.getElementById('feedbackRow').parentElement,
+          'asn_feedback',
+          'Page Optimizer',
+          function() { return document.getElementById('outputText').textContent; }
+        );
+      } catch(err) {
+        document.getElementById('outputPlaceholder').style.display = 'block';
+        document.getElementById('outputPlaceholder').innerHTML = '<span style="color:var(--danger);">Error: ' + err.message + '. Check your API key and try again.</span>';
+      }
+
+      btn.disabled = false;
+      document.getElementById('btnSpinner').style.display = 'none';
+    });
+  </script>
+</body>
+</html>

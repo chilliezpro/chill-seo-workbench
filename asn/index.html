@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASN Workbench — Stream SEO Pros</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  </style>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <!-- Lock Screen -->
+  <div class="lock-screen" id="lockScreen">
+    <div class="lock-card" id="lockCard">
+      <div style="margin-bottom: 16px;">
+        <div style="width: 52px; height: 52px; background: rgba(108,99,255,0.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--accent); margin: 0 auto 16px;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h2>ASN Workbench</h2>
+        <p>Enter your team password to continue.</p>
+      </div>
+      <input type="password" class="input-field" id="passInput" placeholder="Password" autocomplete="off">
+      <div class="lock-error" id="lockError"></div>
+      <button class="btn-primary" id="unlockBtn" style="width: 100%; justify-content: center; margin-top: 12px;">Unlock</button>
+    </div>
+  </div>
+
+  <!-- Portal Content -->
+  <div class="portal-content" id="portalContent">
+
+    <header class="site-header">
+      <div class="site-logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="rgba(108,99,255,0.2)"/>
+          <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6-2.686 6-6 6" stroke="#6c63ff" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="14" cy="14" r="2.5" fill="#6c63ff"/>
+        </svg>
+        Stream <span>SEO Pros</span>
+      </div>
+      <a href="../index.html" style="font-size: 13px; color: var(--text-secondary); display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        All Portals
+      </a>
+    </header>
+
+    <div class="container">
+
+      <!-- API Key Card -->
+      <div class="card api-key-card">
+        <div class="api-key-header" id="apiKeyHeader">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-weight:600; font-size:15px;">Groq API Key</span>
+            <span id="apiKeyBadge"></span>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="apiKeyChevron">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </div>
+        <div class="api-key-body" id="apiKeyBody">
+          <div class="api-key-row">
+            <input type="password" class="input-field" id="apiKeyInput" placeholder="gsk_...">
+            <button class="btn-primary btn-sm" id="saveKeyBtn">Save</button>
+            <button class="btn-ghost btn-sm" id="clearKeyBtn">Clear</button>
+          </div>
+          <div style="font-size:13px; color:var(--text-secondary);">Your key is stored only in your browser. Never shared.</div>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div style="margin-bottom: 32px;">
+        <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 6px;">ASN Workbench</h1>
+        <p style="color: var(--text-secondary); font-size: 15px;">SEO briefs, page optimization, and client reporting.</p>
+      </div>
+
+      <!-- Tool Cards -->
+      <div class="tools-grid">
+
+        <div class="tool-card">
+          <div class="tool-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <div class="tool-title">Content Brief Generator</div>
+          <div class="tool-desc">Build a structured, E-E-A-T-aligned content brief with keyword strategy, heading outline, schema type, and CTA — ready to hand to a writer.</div>
+          <a href="brief.html" class="btn-primary btn-sm" style="align-self: flex-start; margin-top: 4px;">Open Tool →</a>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="tool-title">Page Optimizer</div>
+          <div class="tool-desc">Paste any existing page and get combined SEO + CRO recommendations, meta tag rewrites, headline fixes, and priority action items.</div>
+          <a href="optimizer.html" class="btn-primary btn-sm" style="align-self: flex-start; margin-top: 4px;">Open Tool →</a>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="tool-title">Report Builder</div>
+          <div class="tool-desc">Paste GSC, GBP, GA4, and LSA data to generate a client-ready outcomes-first monthly report and an internal team action plan.</div>
+          <a href="report.html" class="btn-primary btn-sm" style="align-self: flex-start; margin-top: 4px;">Open Tool →</a>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      tools.streamseopros.com · Internal use only
+    </footer>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    var PORTAL_PASS = 'asn2026';
+    var AUTH_KEY = 'asn_auth';
+    var GROQ_KEY = 'asn_groq_key';
+
+    // Auth
+    function showPortal() {
+      document.getElementById('lockScreen').style.display = 'none';
+      var pc = document.getElementById('portalContent');
+      pc.classList.add('visible');
+    }
+
+    if (checkAuth(AUTH_KEY)) {
+      showPortal();
+    }
+
+    document.getElementById('unlockBtn').addEventListener('click', tryUnlock);
+    document.getElementById('passInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') tryUnlock();
+    });
+
+    function tryUnlock() {
+      var val = document.getElementById('passInput').value;
+      if (val === PORTAL_PASS) {
+        setAuth(AUTH_KEY);
+        showPortal();
+      } else {
+        var card = document.getElementById('lockCard');
+        var err = document.getElementById('lockError');
+        err.textContent = 'Incorrect password. Try again.';
+        card.classList.remove('shake');
+        void card.offsetWidth;
+        card.classList.add('shake');
+        document.getElementById('passInput').value = '';
+      }
+    }
+
+    // API Key
+    var apiKeyInput = document.getElementById('apiKeyInput');
+    var apiKeyBadge = document.getElementById('apiKeyBadge');
+    var apiKeyHeader = document.getElementById('apiKeyHeader');
+    var apiKeyBody = document.getElementById('apiKeyBody');
+
+    function refreshKeyBadge() {
+      var key = getApiKey(GROQ_KEY);
+      if (key) {
+        apiKeyBadge.className = 'badge-success';
+        apiKeyBadge.textContent = 'API Key Connected ✓';
+        apiKeyBody.classList.remove('open');
+      } else {
+        apiKeyBadge.className = 'badge-warning';
+        apiKeyBadge.textContent = 'No Key';
+        apiKeyBody.classList.add('open');
+      }
+    }
+
+    apiKeyHeader.addEventListener('click', function() {
+      apiKeyBody.classList.toggle('open');
+    });
+
+    document.getElementById('saveKeyBtn').addEventListener('click', function() {
+      var val = apiKeyInput.value.trim();
+      if (!val) return;
+      saveApiKey(GROQ_KEY, val);
+      apiKeyInput.value = '';
+      refreshKeyBadge();
+      showToast('Key saved to your browser.');
+    });
+
+    document.getElementById('clearKeyBtn').addEventListener('click', function() {
+      clearApiKey(GROQ_KEY);
+      apiKeyInput.value = '';
+      refreshKeyBadge();
+      showToast('API key cleared.');
+    });
+
+    refreshKeyBadge();
+  </script>
+</body>
+</html>

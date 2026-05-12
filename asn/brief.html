@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Brief Generator — ASN Workbench</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  </style>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="rgba(108,99,255,0.2)"/>
+        <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6-2.686 6-6 6" stroke="#6c63ff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="14" cy="14" r="2.5" fill="#6c63ff"/>
+      </svg>
+      Stream <span>SEO Pros</span>
+    </div>
+    <a href="index.html" class="back-nav" style="margin-bottom:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      ASN Workbench
+    </a>
+  </header>
+
+  <div class="container">
+
+    <!-- Warning if no API key -->
+    <div class="warning-banner" id="noKeyWarning" style="display:none;">
+      No Groq API key found. <a href="index.html">Go back and add your key</a> before generating.
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <h1 class="page-title">Content Brief Generator</h1>
+      <p class="page-subtitle">Build a structured, E-E-A-T-aligned content brief ready to hand to a writer.</p>
+    </div>
+
+    <div class="card section-gap">
+      <div class="form-stack">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Client Name</label>
+            <input type="text" class="input-field" id="clientName" placeholder="e.g. Johnson Plumbing">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Page Type</label>
+            <select class="select-field" id="pageType">
+              <option value="Homepage">Homepage</option>
+              <option value="Service Page">Service Page</option>
+              <option value="Location Page">Location Page</option>
+              <option value="Blog Post">Blog Post</option>
+              <option value="About Page">About Page</option>
+              <option value="Press Release">Press Release</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Primary Keyword</label>
+            <input type="text" class="input-field" id="primaryKeyword" placeholder="e.g. emergency plumber Austin TX">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Secondary Keywords <span style="font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
+            <input type="text" class="input-field" id="secondaryKeywords" placeholder="e.g. drain cleaning, water heater repair">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Target Word Count</label>
+            <select class="select-field" id="wordCount">
+              <option value="600–800">600–800 words</option>
+              <option value="800–1,200" selected>800–1,200 words</option>
+              <option value="1,200–1,800">1,200–1,800 words</option>
+              <option value="1,800–2,500">1,800–2,500 words</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Conversion Goal <span style="font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
+            <input type="text" class="input-field" id="conversionGoal" placeholder="e.g. Free consultation form submission">
+          </div>
+        </div>
+
+        <!-- PR Fields (shown only when Press Release selected) -->
+        <div id="prFields" style="display:none;">
+          <hr class="divider">
+          <div style="margin-bottom: 12px;">
+            <span class="form-label">Press Release Details</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Quoted Person Name</label>
+              <input type="text" class="input-field" id="quotedName" placeholder="e.g. Sarah Johnson">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Quoted Person Title</label>
+              <input type="text" class="input-field" id="quotedTitle" placeholder="e.g. CEO & Founder">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 16px;">
+            <label class="form-label">Company / Brand Name</label>
+            <input type="text" class="input-field" id="companyName" placeholder="e.g. Johnson Plumbing Co.">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Brand Voice Notes <span style="font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
+          <textarea class="textarea-field" id="brandVoice" placeholder="e.g. Friendly but professional. Avoid jargon. Emphasize family-owned since 1998." style="min-height:80px;"></textarea>
+        </div>
+
+        <!-- Preferences Panel -->
+        <div class="pref-panel">
+          <button class="pref-toggle" id="prefToggle" data-label="Brief Preferences">Brief Preferences ▾</button>
+          <div class="pref-content" id="prefContent">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Tone</label>
+                <select class="select-field" id="tone">
+                  <option value="Neutral">Neutral</option>
+                  <option value="Authoritative">Authoritative</option>
+                  <option value="Conversational">Conversational</option>
+                  <option value="Local">Local</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Include FAQ Section</label>
+                <select class="select-field" id="inclFaq">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Include Schema Suggestion</label>
+                <select class="select-field" id="inclSchema">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Include Internal Link Suggestions</label>
+                <select class="select-field" id="inclLinks">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <button class="btn-primary" id="generateBtn" style="margin-bottom: 24px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+      Generate Brief
+    </button>
+
+    <!-- Output -->
+    <div id="outputSection" style="display:none;">
+      <div class="output-label">Generated Brief</div>
+      <div class="output-block" id="outputBlock">
+        <div class="output-placeholder" id="outputPlaceholder">Your brief will appear here...</div>
+        <pre class="output-content" id="outputContent" style="display:none;"></pre>
+        <button class="copy-btn" id="copyBtn" style="display:none;">Copy</button>
+      </div>
+
+      <!-- Feedback Row -->
+      <div class="feedback-row" id="feedbackRow">
+        <span style="font-size:13px; color:var(--text-secondary);">Was this helpful?</span>
+        <button class="feedback-btn feedback-btn-up" title="Thumbs up">👍</button>
+        <button class="feedback-btn feedback-btn-down" title="Thumbs down">👎</button>
+      </div>
+      <div class="feedback-expand" id="feedbackExpand">
+        <label class="feedback-label">What was wrong?</label>
+        <textarea class="textarea-field feedback-comment" placeholder="Describe the issue..." style="min-height:80px;"></textarea>
+        <button class="btn-ghost btn-sm feedback-send" style="align-self:flex-start;">Send Feedback</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    tools.streamseopros.com · Internal use only
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    var GROQ_KEY = 'asn_groq_key';
+
+    // Check key on load
+    if (!getApiKey(GROQ_KEY)) {
+      document.getElementById('noKeyWarning').style.display = '';
+    }
+
+    // Pref panel
+    initPrefPanel(
+      document.getElementById('prefToggle'),
+      document.getElementById('prefContent')
+    );
+
+    // Show/hide PR fields
+    document.getElementById('pageType').addEventListener('change', function() {
+      var isPR = this.value === 'Press Release';
+      document.getElementById('prFields').style.display = isPR ? '' : 'none';
+    });
+
+    // Generate
+    document.getElementById('generateBtn').addEventListener('click', generateBrief);
+
+    async function generateBrief() {
+      var apiKey = getApiKey(GROQ_KEY);
+      if (!apiKey) {
+        showToast('No API key found. Add it on the ASN portal page.');
+        return;
+      }
+
+      var clientName = document.getElementById('clientName').value.trim();
+      var pageType = document.getElementById('pageType').value;
+      var primaryKeyword = document.getElementById('primaryKeyword').value.trim();
+      var secondaryKeywords = document.getElementById('secondaryKeywords').value.trim();
+      var wordCount = document.getElementById('wordCount').value;
+      var conversionGoal = document.getElementById('conversionGoal').value.trim();
+      var brandVoice = document.getElementById('brandVoice').value.trim();
+      var tone = document.getElementById('tone').value;
+      var inclFaq = document.getElementById('inclFaq').value;
+      var inclSchema = document.getElementById('inclSchema').value;
+      var inclLinks = document.getElementById('inclLinks').value;
+
+      if (!primaryKeyword) {
+        showToast('Please enter a primary keyword.');
+        return;
+      }
+
+      // PR fields
+      var prExtra = '';
+      if (pageType === 'Press Release') {
+        var quotedName = document.getElementById('quotedName').value.trim();
+        var quotedTitle = document.getElementById('quotedTitle').value.trim();
+        var companyName = document.getElementById('companyName').value.trim();
+        if (quotedName || quotedTitle || companyName) {
+          prExtra = '\nPress Release Details:\nQuoted Person: ' + quotedName + '\nTitle: ' + quotedTitle + '\nCompany: ' + companyName;
+        }
+      }
+
+      var systemPrompt = 'You are a senior SEO content strategist. Generate a structured, E-E-A-T-aligned content brief for a writer.\nYour output must follow this exact format with no deviations:\n\nPAGE TITLE SUGGESTION\n[One recommended title tag, max 60 characters]\n\nMETA DESCRIPTION\n[One meta description, max 155 characters, includes primary keyword and a CTA]\n\nH1 RECOMMENDATION\n[One H1, different from title tag, natural language]\n\nSEARCH INTENT\n[One sentence: what the searcher wants when using this keyword]\n\nPRIMARY KEYWORD\n[Exact keyword as provided]\n\nSECONDARY KEYWORDS\n[List each on its own line with a bullet]\n\nRECOMMENDED HEADING STRUCTURE\nH2: [heading]\n  H3: [heading if needed]\nH2: [heading]\n  H3: [heading if needed]\n[Continue until full outline is complete]\n\nCONTENT REQUIREMENTS\n[3–5 specific things the writer must include based on the page type and keyword. Be specific.]\n\nE-E-A-T REQUIREMENTS\n[3 specific ways to demonstrate Experience, Expertise, Authoritativeness, and Trust for this topic]\n\nSCHEMA TYPE\n[Recommended schema markup type and why — only if Include schema = ' + inclSchema + ']\n\nINTERNAL LINK SUGGESTIONS\n[2–3 page types to link from/to — only if Include internal links = ' + inclLinks + ']\n\nFAQ SECTION\n[3–5 questions and brief answer directions — only if Include FAQ = ' + inclFaq + ']\n\nCTA RECOMMENDATION\n[Recommended call to action for this page type]\n\n' + (pageType === 'Press Release' ? 'For Press Release page type also include:\nPRESS RELEASE STRUCTURE\n[Lead paragraph, quote block using the provided person name and title, boilerplate note]\n\n' : '') + 'Tone: ' + tone + '\nDo not include any text outside this format.\nDo not use markdown bold (**) or heading symbols (#).';
+
+      var userPrompt = 'Client: ' + (clientName || 'Not specified') + '\nPage Type: ' + pageType + '\nPrimary Keyword: ' + primaryKeyword + '\nSecondary Keywords: ' + (secondaryKeywords || 'None provided') + '\nTarget Word Count: ' + wordCount + '\nConversion Goal: ' + (conversionGoal || 'Not specified') + '\nBrand Voice Notes: ' + (brandVoice || 'None') + prExtra + '\n\nInclude FAQ: ' + inclFaq + '\nInclude Schema: ' + inclSchema + '\nInclude Internal Links: ' + inclLinks + '\nTone: ' + tone;
+
+      var btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+      var outputSection = document.getElementById('outputSection');
+      var outputPlaceholder = document.getElementById('outputPlaceholder');
+      var outputContent = document.getElementById('outputContent');
+      var copyBtn = document.getElementById('copyBtn');
+
+      outputSection.style.display = '';
+      outputPlaceholder.style.display = '';
+      outputContent.style.display = 'none';
+      copyBtn.style.display = 'none';
+      outputContent.textContent = '';
+
+      try {
+        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.5, 2000);
+        var cleaned = cleanOutput(result);
+        outputContent.textContent = cleaned;
+        outputPlaceholder.style.display = 'none';
+        outputContent.style.display = '';
+        copyBtn.style.display = '';
+      } catch(e) {
+        outputPlaceholder.textContent = 'Error: ' + e.message;
+        outputPlaceholder.style.color = 'var(--danger)';
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate Brief';
+
+      // Copy button
+      initCopyBtn(copyBtn, function() { return outputContent.textContent; });
+    }
+
+    // Feedback
+    var feedbackContainer = document.createElement('div');
+    feedbackContainer.appendChild(document.getElementById('feedbackRow'));
+    feedbackContainer.appendChild(document.getElementById('feedbackExpand'));
+    document.getElementById('outputSection').appendChild(feedbackContainer);
+
+    initFeedback(
+      document.getElementById('outputSection'),
+      'asn_feedback',
+      'Content Brief Generator',
+      function() { return document.getElementById('outputContent').textContent; }
+    );
+  </script>
+</body>
+</html>
