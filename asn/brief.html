@@ -13,10 +13,9 @@
 
   <header class="site-header">
     <div class="site-logo">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <rect width="28" height="28" rx="8" fill="rgba(108,99,255,0.2)"/>
-        <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6-2.686 6-6 6" stroke="#6c63ff" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="14" cy="14" r="2.5" fill="#6c63ff"/>
+      <svg width="32" height="28" viewBox="0 0 32 28" fill="none">
+        <polygon points="1,1 1,19 16,10" fill="#E04214" stroke="#E04214" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <polygon points="10,9 10,27 25,18" fill="#2C3A4A" stroke="#2C3A4A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
       </svg>
       Stream <span>SEO Pros</span>
     </div>
@@ -69,6 +68,28 @@
           <div class="form-group">
             <label class="form-label">Secondary Keywords <span style="font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
             <input type="text" class="input-field" id="secondaryKeywords" placeholder="e.g. drain cleaning, water heater repair">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" class="input-field" id="location" placeholder="e.g. Austin, TX">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Audience</label>
+            <input type="text" class="input-field" id="targetAudience" placeholder="e.g. homeowners needing emergency repairs">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category / Topical Cluster</label>
+            <input type="text" class="input-field" id="topicalCluster" placeholder="e.g. /plumbing-services/ or Emergency Plumbing">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Compliance Notes <span style="font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
+            <input type="text" class="input-field" id="complianceNotes" placeholder="e.g. Attorney advertising rules apply">
           </div>
         </div>
 
@@ -191,7 +212,7 @@
   </div>
 
   <footer class="site-footer">
-    tools.streamseopros.com · Internal use only
+    tools.streamseopros.com · Internal use only · <a href="https://streamseopros.com" target="_blank" rel="noopener">streamseopros.com</a>
   </footer>
 
   <div class="toast" id="toast"></div>
@@ -231,6 +252,10 @@
       var pageType = document.getElementById('pageType').value;
       var primaryKeyword = document.getElementById('primaryKeyword').value.trim();
       var secondaryKeywords = document.getElementById('secondaryKeywords').value.trim();
+      var location = document.getElementById('location').value.trim();
+      var targetAudience = document.getElementById('targetAudience').value.trim();
+      var topicalCluster = document.getElementById('topicalCluster').value.trim();
+      var complianceNotes = document.getElementById('complianceNotes').value.trim();
       var wordCount = document.getElementById('wordCount').value;
       var conversionGoal = document.getElementById('conversionGoal').value.trim();
       var brandVoice = document.getElementById('brandVoice').value.trim();
@@ -255,9 +280,9 @@
         }
       }
 
-      var systemPrompt = 'You are a senior SEO content strategist. Generate a structured, E-E-A-T-aligned content brief for a writer.\nYour output must follow this exact format with no deviations:\n\nPAGE TITLE SUGGESTION\n[One recommended title tag, max 60 characters]\n\nMETA DESCRIPTION\n[One meta description, max 155 characters, includes primary keyword and a CTA]\n\nH1 RECOMMENDATION\n[One H1, different from title tag, natural language]\n\nSEARCH INTENT\n[One sentence: what the searcher wants when using this keyword]\n\nPRIMARY KEYWORD\n[Exact keyword as provided]\n\nSECONDARY KEYWORDS\n[List each on its own line with a bullet]\n\nRECOMMENDED HEADING STRUCTURE\nH2: [heading]\n  H3: [heading if needed]\nH2: [heading]\n  H3: [heading if needed]\n[Continue until full outline is complete]\n\nCONTENT REQUIREMENTS\n[3–5 specific things the writer must include based on the page type and keyword. Be specific.]\n\nE-E-A-T REQUIREMENTS\n[3 specific ways to demonstrate Experience, Expertise, Authoritativeness, and Trust for this topic]\n\nSCHEMA TYPE\n[Recommended schema markup type and why — only if Include schema = ' + inclSchema + ']\n\nINTERNAL LINK SUGGESTIONS\n[2–3 page types to link from/to — only if Include internal links = ' + inclLinks + ']\n\nFAQ SECTION\n[3–5 questions and brief answer directions — only if Include FAQ = ' + inclFaq + ']\n\nCTA RECOMMENDATION\n[Recommended call to action for this page type]\n\n' + (pageType === 'Press Release' ? 'For Press Release page type also include:\nPRESS RELEASE STRUCTURE\n[Lead paragraph, quote block using the provided person name and title, boilerplate note]\n\n' : '') + 'Tone: ' + tone + '\nDo not include any text outside this format.\nDo not use markdown bold (**) or heading symbols (#).';
+      var systemPrompt = 'You are a senior SEO content strategist. Generate a structured, E-E-A-T-aligned content brief for a writer.\nYour output must follow this exact format with no deviations:\n\nPAGE TITLE SUGGESTION\n[One recommended title tag, max 60 characters]\n\nMETA DESCRIPTION\n[One meta description, max 155 characters, includes primary keyword and a CTA]\n\nH1 RECOMMENDATION\n[One H1, different from title tag, natural language]\n\nSEARCH INTENT\n[One sentence: what the searcher wants when using this keyword]\n\nPRIMARY KEYWORD\n[Exact keyword as provided]\n\nSECONDARY KEYWORDS\n[List each on its own line with a bullet]\n\nRECOMMENDED HEADING STRUCTURE\nH2: [heading]\n  H3: [heading if needed]\nH2: [heading]\n  H3: [heading if needed]\n[Continue until full outline is complete]\n\nCONTENT REQUIREMENTS\n[3–5 specific things the writer must include based on the page type and keyword. Be specific.]\n\nE-E-A-T REQUIREMENTS\n[3 specific ways to demonstrate Experience, Expertise, Authoritativeness, and Trust for this topic]\n\nSCHEMA TYPE\n[Recommended schema markup type and why — only if Include schema = ' + inclSchema + ']\n\nINTERNAL LINK SUGGESTIONS\n[2–3 page types to link from/to — only if Include internal links = ' + inclLinks + ']\n\nFAQ SECTION\n[3–5 questions and brief answer directions — only if Include FAQ = ' + inclFaq + ']\n\nCTA RECOMMENDATION\n[Recommended call to action for this page type]\n\nOPENING BLOCK RULE\n[First 40–60 words must earn the searcher\'s click immediately. The first sentence should name the service, city, and one specific benefit. No generic openers.]\n\nWRITER HANDOFF NOTES\nLocation: [use city/region from the location field in the first sentence and at least once per major section]\nTarget Audience: [shape all examples and language toward this specific reader]\nCategory / Cluster: [connect internal links within this topical cluster]\nCompliance Flag: [flag any advertiser or legal rules — leave blank if none provided]\nRecommended Media: [suggest 1–2 image or video types that support E-E-A-T on this page type]\nClient Verification Points: [2 specific facts or credentials the writer should confirm with the client before publishing]\n\n' + (pageType === 'Press Release' ? 'For Press Release page type also include:\nPRESS RELEASE STRUCTURE\n[Lead paragraph, quote block using the provided person name and title, boilerplate note]\n\n' : '') + 'Tone: ' + tone + '\nDo not include any text outside this format.\nDo not use markdown bold (**) or heading symbols (#).';
 
-      var userPrompt = 'Client: ' + (clientName || 'Not specified') + '\nPage Type: ' + pageType + '\nPrimary Keyword: ' + primaryKeyword + '\nSecondary Keywords: ' + (secondaryKeywords || 'None provided') + '\nTarget Word Count: ' + wordCount + '\nConversion Goal: ' + (conversionGoal || 'Not specified') + '\nBrand Voice Notes: ' + (brandVoice || 'None') + prExtra + '\n\nInclude FAQ: ' + inclFaq + '\nInclude Schema: ' + inclSchema + '\nInclude Internal Links: ' + inclLinks + '\nTone: ' + tone;
+      var userPrompt = 'Client: ' + (clientName || 'Not specified') + '\nPage Type: ' + pageType + '\nPrimary Keyword: ' + primaryKeyword + '\nSecondary Keywords: ' + (secondaryKeywords || 'None provided') + '\nLocation: ' + (location || 'Not specified') + '\nTarget Audience: ' + (targetAudience || 'Not specified') + '\nCategory / Topical Cluster: ' + (topicalCluster || 'Not specified') + '\nCompliance Notes: ' + (complianceNotes || 'None') + '\nTarget Word Count: ' + wordCount + '\nConversion Goal: ' + (conversionGoal || 'Not specified') + '\nBrand Voice Notes: ' + (brandVoice || 'None') + prExtra + '\n\nInclude FAQ: ' + inclFaq + '\nInclude Schema: ' + inclSchema + '\nInclude Internal Links: ' + inclLinks + '\nTone: ' + tone;
 
       var btn = document.getElementById('generateBtn');
       btn.disabled = true;

@@ -5,8 +5,8 @@
   --surface: #1a1d27;
   --surface-2: #21253a;
   --border: #2a2d3a;
-  --accent: #6c63ff;
-  --accent-hover: #857dff;
+  --accent: #E04214;
+  --accent-hover: #F05A2A;
   --text-primary: #f0f0f5;
   --text-secondary: #8b8fa8;
   --success: #22c55e;
@@ -133,7 +133,7 @@ a:hover {
 
 .input-field:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(224, 66, 20, 0.2);
 }
 
 .input-field::placeholder {
@@ -157,7 +157,7 @@ a:hover {
 
 .textarea-field:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(224, 66, 20, 0.2);
 }
 
 .textarea-field::placeholder {
@@ -185,7 +185,7 @@ a:hover {
 
 .select-field:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(224, 66, 20, 0.2);
 }
 
 .select-field option {
@@ -731,7 +731,7 @@ a:hover {
 .tool-icon {
   width: 40px;
   height: 40px;
-  background: rgba(108, 99, 255, 0.15);
+  background: rgba(224, 66, 20, 0.12);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -779,7 +779,7 @@ a:hover {
 .portal-card-icon {
   width: 52px;
   height: 52px;
-  background: rgba(108, 99, 255, 0.15);
+  background: rgba(224, 66, 20, 0.12);
   border-radius: 14px;
   display: flex;
   align-items: center;

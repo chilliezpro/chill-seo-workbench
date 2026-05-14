@@ -40,25 +40,64 @@ async function callGroq(apiKey, systemPrompt, userPrompt, temperature, maxTokens
 // ── Page Fetch ────────────────────────────────────────────────────
 
 async function fetchPageText(url) {
-  var proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
-  var res = await fetch(proxy);
-  if (!res.ok) throw new Error('Fetch failed');
-  var data = await res.json();
-  var html = data.contents || '';
-  var div = document.createElement('div');
-  div.innerHTML = html;
-  ['script','style','nav','footer','header','aside',
-   'noscript','iframe','form','button','svg','img',
-   'figure','picture'].forEach(function(tag) {
-    div.querySelectorAll(tag).forEach(function(el) { el.remove(); });
-  });
-  var text = div.innerText || div.textContent || '';
-  text = text.replace(/\n{3,}/g, '\n\n')
-             .replace(/[ \t]{2,}/g, ' ')
-             .trim();
-  return text.length > 3500
-    ? text.substring(0, 3500) + '...'
-    : text;
+  var encodedUrl = encodeURIComponent(url);
+
+  function extractText(html) {
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    ['script','style','nav','footer','header','aside',
+     'noscript','iframe','form','button','svg','img',
+     'figure','picture'].forEach(function(tag) {
+      div.querySelectorAll(tag).forEach(function(el) { el.remove(); });
+    });
+    var text = div.innerText || div.textContent || '';
+    text = text.replace(/\n{3,}/g, '\n\n')
+               .replace(/[ \t]{2,}/g, ' ')
+               .trim();
+    return text.length > 3500 ? text.substring(0, 3500) + '...' : text;
+  }
+
+  var proxies = [
+    async function() {
+      var ctrl = new AbortController();
+      var t = setTimeout(function() { ctrl.abort(); }, 8000);
+      try {
+        var res = await fetch('https://corsproxy.io/?' + encodedUrl, { signal: ctrl.signal });
+        clearTimeout(t);
+        if (!res.ok) throw new Error('status ' + res.status);
+        return extractText(await res.text());
+      } catch(e) { clearTimeout(t); throw e; }
+    },
+    async function() {
+      var ctrl = new AbortController();
+      var t = setTimeout(function() { ctrl.abort(); }, 8000);
+      try {
+        var res = await fetch('https://api.allorigins.win/get?url=' + encodedUrl, { signal: ctrl.signal });
+        clearTimeout(t);
+        if (!res.ok) throw new Error('status ' + res.status);
+        var d = await res.json();
+        return extractText(d.contents || '');
+      } catch(e) { clearTimeout(t); throw e; }
+    },
+    async function() {
+      var ctrl = new AbortController();
+      var t = setTimeout(function() { ctrl.abort(); }, 8000);
+      try {
+        var res = await fetch('https://api.codetabs.com/v1/proxy?quest=' + encodedUrl, { signal: ctrl.signal });
+        clearTimeout(t);
+        if (!res.ok) throw new Error('status ' + res.status);
+        return extractText(await res.text());
+      } catch(e) { clearTimeout(t); throw e; }
+    }
+  ];
+
+  for (var i = 0; i < proxies.length; i++) {
+    try {
+      var result = await proxies[i]();
+      if (result && result.length >= 100) return result;
+    } catch(e) {}
+  }
+  throw new Error('Could not fetch page. Try pasting the content manually instead.');
 }
 
 // ── Toast ─────────────────────────────────────────────────────────
