@@ -267,13 +267,13 @@
       outputSection.style.display = '';
       outputPlaceholder.style.display = '';
       outputPlaceholder.style.color = 'var(--text-secondary)';
-      outputPlaceholder.textContent = 'Your caption will appear here...';
+      outputPlaceholder.textContent = 'Generating… this may take a moment for quality checks';
       outputContent.style.display = 'none';
       copyBtn.style.display = 'none';
       outputContent.textContent = '';
 
       try {
-        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 1500);
+        var result = await callGroqReliable(apiKey, systemPrompt, userPrompt, ['CAPTION', 'CTA LINE', 'CHARACTER COUNT'], 0.3, 1500);
         var cleaned = cleanOutput(result);
         outputContent.textContent = cleaned;
         outputPlaceholder.style.display = 'none';

@@ -213,7 +213,7 @@
 
     var MISSING_DATA_PREFIX = 'If any data section is blank or missing, write exactly:\n[Section name]: No data provided for this period.\nDo not skip missing sections. Do not invent numbers.\nDo not change the format of other sections because one section is missing.\n\nDo not use markdown bold (**) or heading symbols (#).\nUse plain section labels in ALL CAPS followed by a line break instead of markdown headers.\n\n';
 
-    var CLIENT_SYSTEM_PROMPT = MISSING_DATA_PREFIX + 'You are a senior SEO account manager. Generate a professional, outcomes-first monthly report for the client. The report should highlight wins first, explain what drove the results, note anything that declined and why, and end with next steps.\n\nReturn in this exact format:\n\nEXECUTIVE SUMMARY\n[2-3 sentences: the single most important story from this month\'s data. Outcomes first.]\n\nKEY WINS THIS MONTH\n[3-5 specific wins with numbers where available. One per line.]\n\nSEARCH PERFORMANCE (GSC)\n[Summarize clicks, impressions, CTR, position. Highlight top queries and pages. Note trends.]\n\nLOCAL PRESENCE (GBP)\n[Summarize views, calls, direction requests, reviews, website clicks. Highlight notable changes.]\n\nWEBSITE TRAFFIC (GA4)\n[Summarize sessions, users, conversions, top traffic sources. Note any significant changes.]\n\nLOCAL ADS PERFORMANCE (LSA)\n[Summarize leads, spend, performance. Note efficiency or issues.]\n\nWHAT NEEDS ATTENTION\n[1-3 items that declined or need focus next month. Be honest but constructive.]\n\nNEXT MONTH PRIORITIES\n[3-4 specific action items for the coming month]\n\nReport length preference: {LENGTH}\nHighlight wins prominently: {WINS}\nTone: {TONE}';
+    var CLIENT_SYSTEM_PROMPT = MISSING_DATA_PREFIX + 'You are a senior SEO account manager. Generate a professional, outcomes-first monthly report for the client. The report should highlight wins first, explain what drove the results, note anything that declined and why, and end with next steps.\n\nReturn in this exact format:\n\nEXECUTIVE SUMMARY\n[2-3 sentences: the single most important story from this month\'s data. Outcomes first.]\n\nKEY WINS\n[3-5 specific wins with numbers where available. One per line.]\n\nMETRICS OVERVIEW\nSearch (GSC): [Summarize clicks, impressions, CTR, position. Highlight top queries and pages.]\nLocal (GBP): [Summarize views, calls, direction requests, reviews, website clicks.]\nWebsite (GA4): [Summarize sessions, users, conversions, top traffic sources.]\nAds (LSA): [Summarize leads, spend, performance. Note efficiency or issues.]\n\nWORK COMPLETED\n[3-5 specific SEO tasks completed this month — new pages, citations, link building, GBP posts, schema, or other deliverables.]\n\nISSUES IDENTIFIED\n[1-3 items that declined or need focus. Be honest but constructive.]\n\nNEXT STEPS\n[3-4 specific action items for the coming month]\n\nReport length preference: {LENGTH}\nHighlight wins prominently: {WINS}\nTone: {TONE}';
 
     var INTERNAL_SYSTEM_PROMPT = MISSING_DATA_PREFIX + 'You are an SEO delivery team lead. Generate an internal action plan based on the client\'s monthly data. This is for the internal team, not the client — be direct, specific, and technical where needed.\n\nReturn in this exact format:\n\nDATA SUMMARY\n[Quick summary of this month\'s numbers across all platforms]\n\nWHAT\'S WORKING\n[List what\'s performing well and why it matters]\n\nPROBLEM AREAS\n[List specific issues identified in the data]\n\nPRIORITY TASKS FOR NEXT MONTH\nTask 1: [Specific task — what, why, expected impact]\nTask 2: [Specific task — what, why, expected impact]\nTask 3: [Specific task — what, why, expected impact]\n[Continue as needed]\n\nCONTENT OPPORTUNITIES\n[2-3 content ideas based on the data]\n\nTECHNICAL FLAGS\n[Any technical issues suggested by the data that need investigation]\n\nCLIENT COMMUNICATION NOTES\n[What to tell the client vs. what to handle internally]';
 
@@ -244,13 +244,15 @@
         .replace('{WINS}', inputs.highlightWins)
         .replace('{TONE}', inputs.reportTone);
       var userPrompt = buildUserPrompt(inputs);
-      return await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2500);
+      var requiredSections = ['EXECUTIVE SUMMARY', 'KEY WINS', 'METRICS OVERVIEW', 'WORK COMPLETED', 'ISSUES IDENTIFIED', 'NEXT STEPS'];
+      return await callGroqReliable(apiKey, systemPrompt, userPrompt, requiredSections, 0.3, 2500);
     }
 
     async function generateInternalPlan(inputs) {
       var apiKey = getApiKey(GROQ_KEY);
       var userPrompt = buildUserPrompt(inputs);
-      return await callGroq(apiKey, INTERNAL_SYSTEM_PROMPT, userPrompt, 0.4, 2000);
+      var requiredSections = ['DATA SUMMARY', 'PROBLEM AREAS', 'PRIORITY TASKS FOR NEXT MONTH', 'CLIENT COMMUNICATION NOTES'];
+      return await callGroqReliable(apiKey, INTERNAL_SYSTEM_PROMPT, userPrompt, requiredSections, 0.3, 2000);
     }
 
     function showClientOutput(text) {
@@ -259,7 +261,7 @@
       var content = document.getElementById('clientOutputContent');
       var copyBtn = document.getElementById('clientCopyBtn');
       if (text === null) {
-        placeholder.textContent = 'Generating client report...';
+        placeholder.textContent = 'Generating… this may take a moment for quality checks';
         placeholder.style.color = 'var(--text-secondary)';
         placeholder.style.display = '';
         content.style.display = 'none';
@@ -284,7 +286,7 @@
       var content = document.getElementById('internalOutputContent');
       var copyBtn = document.getElementById('internalCopyBtn');
       if (text === null) {
-        placeholder.textContent = 'Generating internal plan...';
+        placeholder.textContent = 'Generating… this may take a moment for quality checks';
         placeholder.style.color = 'var(--text-secondary)';
         placeholder.style.display = '';
         content.style.display = 'none';

@@ -1,5 +1,12 @@
 /* shared.js — common utilities for Stream SEO Pros tools */
 
+/* ─── MODEL CONFIG ─── */
+const MODEL_CONFIG = {
+  model: 'llama-3.3-70b-versatile',
+  defaultTemperature: 0.3,
+  maxTokens: 1800
+};
+
 /* ─── OUTPUT CLEANING ─── */
 function cleanOutput(text) {
   return text
@@ -23,7 +30,7 @@ async function callGroq(apiKey, systemPrompt, userPrompt, temperature, maxTokens
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
+      model: MODEL_CONFIG.model,
       temperature: temperature,
       max_tokens: maxTokens,
       messages: [
@@ -35,6 +42,35 @@ async function callGroq(apiKey, systemPrompt, userPrompt, temperature, maxTokens
   if (!res.ok) throw new Error('API error ' + res.status);
   const data = await res.json();
   return data.choices[0].message.content;
+}
+
+/* ─── SELF-CHECK + RELIABLE CALL ─── */
+function withSelfCheck(systemPrompt, requiredSections) {
+  const sectionList = requiredSections.join(', ');
+  return systemPrompt + '\n\nSELF-CHECK (required before responding):\nBefore you output your final answer, verify:\n1. Does the output include ALL of these exact section headers: ' + sectionList + '?\n2. Did you follow every formatting rule given above exactly?\n3. Is every claim grounded in the actual source content provided — not invented or generic?\nIf any check fails, silently correct your response before outputting it. Do not mention this self-check process in your final answer.';
+}
+
+function validateOutput(text, requiredSections) {
+  const missing = requiredSections.filter(section =>
+    text.toUpperCase().indexOf(section.toUpperCase()) === -1
+  );
+  return { valid: missing.length === 0, missing };
+}
+
+async function callGroqReliable(apiKey, systemPrompt, userPrompt, requiredSections, temperature, maxTokens) {
+  const temp   = temperature !== undefined ? temperature : MODEL_CONFIG.defaultTemperature;
+  const tokens = maxTokens   !== undefined ? maxTokens   : MODEL_CONFIG.maxTokens;
+  const fullSystemPrompt = withSelfCheck(systemPrompt, requiredSections);
+
+  let output = await callGroq(apiKey, fullSystemPrompt, userPrompt, temp, tokens);
+  const check = validateOutput(output, requiredSections);
+
+  if (!check.valid) {
+    const retryPrompt = userPrompt + '\n\nIMPORTANT: Your previous response was missing these required sections: ' + check.missing.join(', ') + '. Regenerate the FULL response, following the exact format, with ALL required sections present this time.';
+    output = await callGroq(apiKey, fullSystemPrompt, retryPrompt, temp, tokens);
+  }
+
+  return output;
 }
 
 /* ─── PAGE FETCH ─── */

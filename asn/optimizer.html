@@ -221,29 +221,29 @@
     /* ── Format block per optimization goal ── */
     function getFormatBlock(optGoal, priority, includeMeta, includeH1) {
       var metaBlock = includeMeta
-        ? '\n\nREWRITTEN META TAGS\nTitle: [rewritten title tag, max 60 chars]\nMeta description: [rewritten meta, max 155 chars]'
+        ? '\n\nREWRITTEN META TAGS\nTitle:\nCURRENT: "[existing title from the page — quote it exactly]"\nISSUE: [what is wrong with it]\nIMPROVED: "[rewritten title, max 60 chars]"\n\nMeta description:\nCURRENT: "[existing meta description — quote it, or note if missing]"\nISSUE: [what is wrong with it]\nIMPROVED: "[rewritten meta, max 155 chars]"'
         : '';
       var h1Block = includeH1
-        ? '\n\nREWRITTEN H1\n[Standalone on-page headline copy. This is NOT a meta title — do not use a pipe character or treat it like a character-limited title tag.]\n\nREWRITTEN INTRO PARAGRAPH\n[Rewritten opening paragraph — clearer, keyword-natural, benefit-led]'
+        ? '\n\nREWRITTEN H1\nCURRENT: "[exact H1 from the page — quote it]"\nISSUE: [what is wrong with it]\nIMPROVED: "[rewritten on-page headline — not a title tag, no pipe character]"\n\nREWRITTEN INTRO PARAGRAPH\nCURRENT: "[opening sentence(s) from the page — quote them]"\nISSUE: [what is wrong with it]\nIMPROVED: "[rewritten opening paragraph — clearer, keyword-natural, benefit-led]"'
         : '';
 
       if (optGoal === 'seo_cro') {
-        if (priority === 'quick') {
-          return 'Analyze the provided page content and return recommendations in this exact format:\n\nOVERALL ASSESSMENT\n[2-3 sentence summary of the page\'s current state]\n\nTOP FIXES\n[List only the 3-5 highest-impact fixes total, combining SEO and CRO. Label each as (SEO) or (CRO). Order by impact, highest first. Do not pad to hit a number.]' + metaBlock + h1Block + '\n\nDo not use markdown bold or heading symbols.';
-        }
-        return 'Analyze the provided page content and return recommendations in this exact format:\n\nOVERALL ASSESSMENT\n[2-3 sentence summary of the page\'s current state]\n\nSEO FIXES\n[List only genuine issues found, typically 2-6. Do not pad to a fixed number.]\n\nCRO FIXES\n[Same rule — only genuine issues, typically 2-6.]' + metaBlock + h1Block + '\n\nSINGLE HIGHEST-IMPACT FIX\n[Identify the ONE fix from above that will move the needle fastest, and briefly say why. Do not just restate multiple items from the lists above.]\n\nDo not use markdown bold or heading symbols.';
+        var priorityInstruction = priority === 'quick'
+          ? 'Focus on the 2–3 highest-impact fixes. Order by impact, highest first.'
+          : 'List all genuine issues found, typically 2–6. Do not pad to a fixed number.';
+        return 'Analyze the provided page content and return recommendations in this exact format:\n\nOVERALL ASSESSMENT\n[2-3 sentence summary of the page\'s current state]\n\nPRIORITY SEO FIXES\n' + priorityInstruction + '\nFor each fix use this format:\nFix [number]:\nCURRENT: "[exact phrase or sentence copied from the page]"\nISSUE: [what is wrong with it, specifically]\nIMPROVED: "[exact rewritten replacement]"\n\nPRIORITY CRO FIXES\n' + priorityInstruction + '\nFor each fix use this format:\nFix [number]:\nCURRENT: "[exact phrase or sentence copied from the page]"\nISSUE: [what is wrong with it, specifically]\nIMPROVED: "[exact rewritten replacement]"' + metaBlock + h1Block + '\n\nQUICK WIN SUMMARY\n[Identify the ONE fix from above that will move the needle fastest. Name the section and fix number. Explain why in one sentence.]\n\nDo not use markdown bold or heading symbols.';
       }
 
       if (optGoal === 'full_rewrite') {
-        return 'Rewrite the provided page content in full, optimized for both search and conversions. Return in this exact format:\n\nREWRITTEN PAGE CONTENT\n[Full rewrite here — preserve structure but improve every element: headline, intro, body sections, CTA]\n\nWHAT CHANGED AND WHY\n[List only genuine, meaningful changes made — typically 3-6. Do not pad.]\n\nDo not use markdown bold or heading symbols.';
+        return 'Rewrite the provided page content in full, optimized for both search and conversions. Return in this exact format:\n\nREWRITTEN PAGE CONTENT\n[Full rewrite here — preserve structure but improve every element: headline, intro, body sections, CTA]\n\nWHAT CHANGED AND WHY\nFor each meaningful change:\nFix [number]:\nCURRENT: "[exact original phrase or sentence]"\nISSUE: [why it was changed]\nIMPROVED: "[the new version as it appears in the rewrite]"\n[Typically 3–6 changes. Do not pad.]\n\nDo not use markdown bold or heading symbols.';
       }
 
       if (optGoal === 'meta_only') {
-        return 'Return only this, nothing else:\n\nTITLE TAG\n[Rewritten title, max 60 characters, includes primary keyword]\n\nMETA DESCRIPTION\n[Rewritten meta, max 155 characters, includes keyword and CTA]\n\nOG TITLE\n[Open Graph title suggestion]\n\nOG DESCRIPTION\n[Open Graph description suggestion]\n\nDo not use markdown bold or heading symbols.';
+        return 'Return only this, nothing else:\n\nTITLE TAG\nCURRENT: "[existing title from the page — quote it exactly]"\nISSUE: [what is wrong with it]\nIMPROVED: "[rewritten title, max 60 characters, includes primary keyword]"\n\nMETA DESCRIPTION\nCURRENT: "[existing meta description — quote it, or note if missing]"\nISSUE: [what is wrong with it]\nIMPROVED: "[rewritten meta, max 155 characters, includes keyword and CTA]"\n\nOG TITLE\nIMPROVED: "[Open Graph title suggestion]"\n\nOG DESCRIPTION\nIMPROVED: "[Open Graph description suggestion]"\n\nDo not use markdown bold or heading symbols.';
       }
 
       // headline_intro
-      return 'Return only this, nothing else:\n\nREWRITTEN H1\n[Standalone on-page headline — natural, keyword-included, benefit-led. Not formatted like a meta title.]\n\nREWRITTEN INTRO PARAGRAPH\n[2-3 sentence intro — hooks the reader, states the benefit, includes the keyword naturally]\n\nWHY THIS WORKS\n[2-3 sentences explaining the changes]\n\nDo not use markdown bold or heading symbols.';
+      return 'Return only this, nothing else:\n\nREWRITTEN H1\nCURRENT: "[exact H1 from the page — quote it]"\nISSUE: [what is wrong with it]\nIMPROVED: "[rewritten on-page headline — natural, keyword-included, benefit-led]"\n\nREWRITTEN INTRO PARAGRAPH\nCURRENT: "[opening sentence(s) from the page — quote them]"\nISSUE: [what is wrong with it]\nIMPROVED: "[rewritten opening paragraph — hooks the reader, states the benefit, includes the keyword naturally]"\n\nWHY THIS WORKS\n[2-3 sentences explaining the changes]\n\nDo not use markdown bold or heading symbols.';
     }
 
     var ROLE_INTROS = {
@@ -330,13 +330,26 @@
       outputSection.style.display = '';
       outputPlaceholder.style.display = '';
       outputPlaceholder.style.color = 'var(--text-secondary)';
-      outputPlaceholder.textContent = 'Analysis will appear here...';
+      outputPlaceholder.textContent = 'Generating… this may take a moment for quality checks';
       outputContent.style.display = 'none';
       copyBtn.style.display = 'none';
       outputContent.textContent = '';
 
+      var requiredSections;
+      if (optGoal === 'seo_cro') {
+        requiredSections = ['OVERALL ASSESSMENT', 'PRIORITY SEO FIXES', 'PRIORITY CRO FIXES', 'QUICK WIN SUMMARY'];
+        if (includeMeta) requiredSections.push('REWRITTEN META TAGS');
+        if (includeH1) requiredSections.push('REWRITTEN H1', 'REWRITTEN INTRO PARAGRAPH');
+      } else if (optGoal === 'full_rewrite') {
+        requiredSections = ['REWRITTEN PAGE CONTENT', 'WHAT CHANGED AND WHY'];
+      } else if (optGoal === 'meta_only') {
+        requiredSections = ['TITLE TAG', 'META DESCRIPTION', 'OG TITLE', 'OG DESCRIPTION'];
+      } else {
+        requiredSections = ['REWRITTEN H1', 'REWRITTEN INTRO PARAGRAPH', 'WHY THIS WORKS'];
+      }
+
       try {
-        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.5, 2500);
+        var result = await callGroqReliable(apiKey, systemPrompt, userPrompt, requiredSections, 0.3, 2500);
         var cleaned = cleanOutput(result);
         outputContent.textContent = cleaned;
         outputPlaceholder.style.display = 'none';

@@ -325,13 +325,17 @@
       outputSection.style.display = '';
       outputPlaceholder.style.display = '';
       outputPlaceholder.style.color = 'var(--text-secondary)';
-      outputPlaceholder.textContent = 'Your script will appear here...';
+      outputPlaceholder.textContent = 'Generating… this may take a moment for quality checks';
       outputContent.style.display = 'none';
       copyBtn.style.display = 'none';
       outputContent.textContent = '';
 
+      var requiredSections = activeTab === 'short'
+        ? ['HOOK', 'BODY', 'CALL TO ACTION', 'ESTIMATED READ TIME', 'WORD COUNT']
+        : ['HOOK', 'THE PROBLEM', 'THE SOLUTION', 'WHY TRUST US', 'CALL TO ACTION', 'ESTIMATED READ TIME', 'WORD COUNT'];
+
       try {
-        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2000);
+        var result = await callGroqReliable(apiKey, systemPrompt, userPrompt, requiredSections, 0.3, 2000);
         var cleaned = cleanOutput(result);
         outputContent.textContent = cleaned;
         outputPlaceholder.style.display = 'none';

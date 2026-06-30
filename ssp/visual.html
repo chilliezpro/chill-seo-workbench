@@ -448,13 +448,14 @@
 
       var btn = document.getElementById('m1GenerateBtn');
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Generating...';
+      btn.innerHTML = '<span class="spinner"></span> Generating… quality checks in progress';
 
       var outputArea = document.getElementById('m1OutputArea');
       outputArea.innerHTML = '';
 
       try {
-        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2500);
+        var result = await callGroqReliable(apiKey, systemPrompt, userPrompt,
+          ['SCENE', 'TEXT OVERLAY', 'MOOD AND COLOR', 'FORMAT', 'STYLE', 'STOCK SEARCH KEYWORDS'], 0.3, 2500);
         var cleaned = cleanOutput(result);
         renderConceptOutputs(outputArea, cleaned, conceptCount, 'm1', 'ssp_feedback', 'Visual - Generate from Page');
       } catch(e) {
@@ -488,13 +489,14 @@
 
       var btn = document.getElementById('m2GenerateBtn');
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Generating...';
+      btn.innerHTML = '<span class="spinner"></span> Generating… quality checks in progress';
 
       var outputArea = document.getElementById('m2OutputArea');
       outputArea.innerHTML = '';
 
       try {
-        var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2000);
+        var result = await callGroqReliable(apiKey, systemPrompt, userPrompt,
+          ['SCENE', 'TEXT OVERLAY', 'MOOD AND COLOR', 'FORMAT', 'STYLE', 'STOCK SEARCH KEYWORDS'], 0.3, 2000);
         var cleaned = cleanOutput(result);
         renderConceptOutputs(outputArea, cleaned, conceptCount, 'm2', 'ssp_feedback', 'Visual - Brief from Caption');
       } catch(e) {
@@ -634,7 +636,8 @@
         outputArea.appendChild(postDiv);
 
         try {
-          var result = await callGroq(apiKey, systemPrompt, userPrompt, 0.4, 2000);
+          var result = await callGroqReliable(apiKey, systemPrompt, userPrompt,
+            ['ANGLE', 'GBP POST COPY', 'LINK TO EMBED', 'WHY THIS ANGLE'], 0.3, 2000);
           var cleaned = cleanOutput(result);
 
           // Extract angle label for post title
