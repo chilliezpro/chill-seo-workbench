@@ -30,10 +30,6 @@
 
   <div class="container">
 
-    <div class="warning-banner" id="noKeyWarning" style="display:none;">
-      No Groq API key found. <a href="index.html">Go back and add your key</a> before generating.
-    </div>
-
     <div style="margin-bottom: 28px;">
       <h1 class="page-title">Report Builder</h1>
       <p class="page-subtitle">Paste GSC, GBP, GA4, and LSA data to generate client-ready monthly reports and internal action plans.</p>
@@ -205,12 +201,6 @@
 
   <script src="../assets/shared.js"></script>
   <script>
-    var GROQ_KEY = 'asn_groq_key';
-
-    if (!getApiKey(GROQ_KEY)) {
-      document.getElementById('noKeyWarning').style.display = '';
-    }
-
     var MISSING_DATA_PREFIX = 'If any data section is blank or missing, write exactly:\n[Section name]: No data provided for this period.\nDo not skip missing sections. Do not invent numbers.\nDo not change the format of other sections because one section is missing.\n\nDo not use markdown bold (**) or heading symbols (#).\nUse plain section labels in ALL CAPS followed by a line break instead of markdown headers.\n\n';
 
     var CLIENT_SYSTEM_PROMPT = MISSING_DATA_PREFIX + 'You are a senior SEO account manager. Generate a professional, outcomes-first monthly report for the client. The report should highlight wins first, explain what drove the results, note anything that declined and why, and end with next steps.\n\nReturn in this exact format:\n\nEXECUTIVE SUMMARY\n[2-3 sentences: the single most important story from this month\'s data. Outcomes first.]\n\nKEY WINS\n[3-5 specific wins with numbers where available. One per line.]\n\nMETRICS OVERVIEW\nSearch (GSC): [Summarize clicks, impressions, CTR, position. Highlight top queries and pages.]\nLocal (GBP): [Summarize views, calls, direction requests, reviews, website clicks.]\nWebsite (GA4): [Summarize sessions, users, conversions, top traffic sources.]\nAds (LSA): [Summarize leads, spend, performance. Note efficiency or issues.]\n\nWORK COMPLETED\n[3-5 specific SEO tasks completed this month — new pages, citations, link building, GBP posts, schema, or other deliverables.]\n\nISSUES IDENTIFIED\n[1-3 items that declined or need focus. Be honest but constructive.]\n\nNEXT STEPS\n[3-4 specific action items for the coming month]\n\nReport length preference: {LENGTH}\nHighlight wins prominently: {WINS}\nTone: {TONE}';
@@ -238,21 +228,19 @@
     }
 
     async function generateClientReport(inputs) {
-      var apiKey = getApiKey(GROQ_KEY);
       var systemPrompt = CLIENT_SYSTEM_PROMPT
         .replace('{LENGTH}', inputs.reportLength)
         .replace('{WINS}', inputs.highlightWins)
         .replace('{TONE}', inputs.reportTone);
       var userPrompt = buildUserPrompt(inputs);
       var requiredSections = ['EXECUTIVE SUMMARY', 'KEY WINS', 'METRICS OVERVIEW', 'WORK COMPLETED', 'ISSUES IDENTIFIED', 'NEXT STEPS'];
-      return await callGroqReliable(apiKey, systemPrompt, userPrompt, requiredSections, 0.3, 2500);
+      return await generateContent(systemPrompt, userPrompt, requiredSections, 0.3, 2500);
     }
 
     async function generateInternalPlan(inputs) {
-      var apiKey = getApiKey(GROQ_KEY);
       var userPrompt = buildUserPrompt(inputs);
       var requiredSections = ['DATA SUMMARY', 'PROBLEM AREAS', 'PRIORITY TASKS FOR NEXT MONTH', 'CLIENT COMMUNICATION NOTES'];
-      return await callGroqReliable(apiKey, INTERNAL_SYSTEM_PROMPT, userPrompt, requiredSections, 0.3, 2000);
+      return await generateContent(INTERNAL_SYSTEM_PROMPT, userPrompt, requiredSections, 0.3, 2000);
     }
 
     function showClientOutput(text) {
@@ -313,8 +301,6 @@
     }
 
     document.getElementById('generateClientBtn').addEventListener('click', async function() {
-      var apiKey = getApiKey(GROQ_KEY);
-      if (!apiKey) { showToast('No API key found.'); return; }
       var inputs = gatherInputs();
       if (!inputs.gscData && !inputs.gbpData && !inputs.ga4Data && !inputs.lsaData) { showToast('Please paste at least one data source before generating.'); return; }
       disableButtons(true);
@@ -330,8 +316,6 @@
     });
 
     document.getElementById('generateInternalBtn').addEventListener('click', async function() {
-      var apiKey = getApiKey(GROQ_KEY);
-      if (!apiKey) { showToast('No API key found.'); return; }
       var inputs = gatherInputs();
       if (!inputs.gscData && !inputs.gbpData && !inputs.ga4Data && !inputs.lsaData) { showToast('Please paste at least one data source before generating.'); return; }
       disableButtons(true);
@@ -347,8 +331,6 @@
     });
 
     document.getElementById('generateBothBtn').addEventListener('click', async function() {
-      var apiKey = getApiKey(GROQ_KEY);
-      if (!apiKey) { showToast('No API key found.'); return; }
       var inputs = gatherInputs();
       if (!inputs.gscData && !inputs.gbpData && !inputs.ga4Data && !inputs.lsaData) { showToast('Please paste at least one data source before generating.'); return; }
       disableButtons(true);

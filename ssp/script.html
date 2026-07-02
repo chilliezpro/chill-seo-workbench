@@ -30,10 +30,6 @@
 
   <div class="container">
 
-    <div class="warning-banner" id="noKeyWarning" style="display:none;">
-      No Groq API key found. <a href="index.html">Go back and add your key</a> before generating.
-    </div>
-
     <div style="margin-bottom: 28px;">
       <h1 class="page-title">Video Script Generator</h1>
       <p class="page-subtitle">Turn any client page into a ready-to-record video script with hook, body, and CTA.</p>
@@ -219,13 +215,8 @@
 
   <script src="../assets/shared.js"></script>
   <script>
-    var GROQ_KEY = 'ssp_groq_key';
     var pageText = '';
     var activeTab = 'short';
-
-    if (!getApiKey(GROQ_KEY)) {
-      document.getElementById('noKeyWarning').style.display = '';
-    }
 
     // Pref panels
     initPrefPanel(document.getElementById('shortPrefToggle'), document.getElementById('shortPrefContent'));
@@ -281,9 +272,6 @@
     document.getElementById('generateBtn').addEventListener('click', generateScript);
 
     async function generateScript() {
-      var apiKey = getApiKey(GROQ_KEY);
-      if (!apiKey) { showToast('No API key found.'); return; }
-
       var manual = document.getElementById('manualContent').value.trim();
       var content = manual || pageText;
       if (!content) { showToast('Fetch a page or paste content first.'); return; }
@@ -335,7 +323,7 @@
         : ['HOOK', 'THE PROBLEM', 'THE SOLUTION', 'WHY TRUST US', 'CALL TO ACTION', 'ESTIMATED READ TIME', 'WORD COUNT'];
 
       try {
-        var result = await callGroqReliable(apiKey, systemPrompt, userPrompt, requiredSections, 0.3, 2000);
+        var result = await generateContent(systemPrompt, userPrompt, requiredSections, 0.3, 2000);
         var cleaned = cleanOutput(result);
         outputContent.textContent = cleaned;
         outputPlaceholder.style.display = 'none';

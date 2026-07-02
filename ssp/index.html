@@ -52,31 +52,11 @@
 
     <div class="container">
 
-      <!-- API Key Card -->
-      <div class="card api-key-card">
-        <div class="api-key-header" id="apiKeyHeader">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <span style="font-weight:600; font-size:15px;">Groq API Key</span>
-            <span id="apiKeyBadge"></span>
-          </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="apiKeyChevron">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
-        </div>
-        <div class="api-key-body" id="apiKeyBody">
-          <div class="api-key-row">
-            <input type="password" class="input-field" id="apiKeyInput" placeholder="gsk_...">
-            <button class="btn-primary btn-sm" id="saveKeyBtn">Save</button>
-            <button class="btn-ghost btn-sm" id="clearKeyBtn">Clear</button>
-          </div>
-          <div style="font-size:13px; color:var(--text-secondary);">Your key is stored only in your browser. Never shared.</div>
-        </div>
-      </div>
-
       <!-- Header -->
       <div style="margin-bottom: 32px;">
         <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 6px;">SSP Content Engine</h1>
         <p style="color: var(--text-secondary); font-size: 15px;">Scripts, captions, visuals, and GBP post packs from any client page.</p>
+        <p style="color: var(--text-secondary); font-size: 13px; margin-top: 6px;">Powered by Claude — no setup required. Just log in and go.</p>
       </div>
 
       <!-- Tool Cards -->
@@ -134,7 +114,6 @@
   <script>
     var PORTAL_PASS = 'ssp2026';
     var AUTH_KEY = 'ssp_auth';
-    var GROQ_KEY = 'ssp_groq_key';
 
     function showPortal() {
       document.getElementById('lockScreen').style.display = 'none';
@@ -164,47 +143,6 @@
         document.getElementById('passInput').value = '';
       }
     }
-
-    // API Key
-    var apiKeyInput = document.getElementById('apiKeyInput');
-    var apiKeyBadge = document.getElementById('apiKeyBadge');
-    var apiKeyHeader = document.getElementById('apiKeyHeader');
-    var apiKeyBody = document.getElementById('apiKeyBody');
-
-    function refreshKeyBadge() {
-      var key = getApiKey(GROQ_KEY);
-      if (key) {
-        apiKeyBadge.className = 'badge-success';
-        apiKeyBadge.textContent = 'API Key Connected ✓';
-        apiKeyBody.classList.remove('open');
-      } else {
-        apiKeyBadge.className = 'badge-warning';
-        apiKeyBadge.textContent = 'No Key';
-        apiKeyBody.classList.add('open');
-      }
-    }
-
-    apiKeyHeader.addEventListener('click', function() {
-      apiKeyBody.classList.toggle('open');
-    });
-
-    document.getElementById('saveKeyBtn').addEventListener('click', function() {
-      var val = apiKeyInput.value.trim();
-      if (!val) return;
-      saveApiKey(GROQ_KEY, val);
-      apiKeyInput.value = '';
-      refreshKeyBadge();
-      showToast('Key saved to your browser.');
-    });
-
-    document.getElementById('clearKeyBtn').addEventListener('click', function() {
-      clearApiKey(GROQ_KEY);
-      apiKeyInput.value = '';
-      refreshKeyBadge();
-      showToast('API key cleared.');
-    });
-
-    refreshKeyBadge();
   </script>
 </body>
 </html>

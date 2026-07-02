@@ -30,11 +30,6 @@
 
   <div class="container">
 
-    <!-- Warning if no API key -->
-    <div class="warning-banner" id="noKeyWarning" style="display:none;">
-      No Groq API key found. <a href="index.html">Go back and add your key</a> before generating.
-    </div>
-
     <div style="margin-bottom: 28px;">
       <h1 class="page-title">Content Brief Generator</h1>
       <p class="page-subtitle">Build a structured, E-E-A-T-aligned content brief ready to hand to a writer.</p>
@@ -220,13 +215,6 @@
 
   <script src="../assets/shared.js"></script>
   <script>
-    var GROQ_KEY = 'asn_groq_key';
-
-    // Check key on load
-    if (!getApiKey(GROQ_KEY)) {
-      document.getElementById('noKeyWarning').style.display = '';
-    }
-
     // Pref panel
     initPrefPanel(
       document.getElementById('prefToggle'),
@@ -243,12 +231,6 @@
     document.getElementById('generateBtn').addEventListener('click', generateBrief);
 
     async function generateBrief() {
-      var apiKey = getApiKey(GROQ_KEY);
-      if (!apiKey) {
-        showToast('No API key found. Add it on the ASN portal page.');
-        return;
-      }
-
       var clientName = document.getElementById('clientName').value.trim();
       var pageType = document.getElementById('pageType').value;
       var primaryKeyword = document.getElementById('primaryKeyword').value.trim();
@@ -306,7 +288,7 @@
           'SEARCH INTENT', 'PRIMARY KEYWORD', 'RECOMMENDED HEADING STRUCTURE',
           'OVERVIEW BLOCK', 'CONTENT REQUIREMENTS', 'E-E-A-T REQUIREMENTS',
           'FAQ SECTION', 'BRANDED CONCLUSION', 'CTA RECOMMENDATION'];
-        var result = await callGroqReliable(apiKey, systemPrompt, userPrompt, requiredSections, 0.3, 2500);
+        var result = await generateContent(systemPrompt, userPrompt, requiredSections, 0.3, 2500);
         var cleaned = cleanOutput(result);
         outputContent.textContent = cleaned;
         outputPlaceholder.style.display = 'none';

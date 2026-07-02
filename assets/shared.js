@@ -1,11 +1,3 @@
-// ── Model Config ─────────────────────────────────────────────────
-
-var MODEL_CONFIG = {
-  model: 'llama-3.3-70b-versatile',
-  defaultTemperature: 0.3,
-  maxTokens: 1800
-};
-
 // ── Output Cleaning ──────────────────────────────────────────────
 
 function cleanOutput(text) {
@@ -18,61 +10,37 @@ function cleanOutput(text) {
     .trim();
 }
 
-// ── Groq API Call ─────────────────────────────────────────────────
+// ── Generation Proxy ────────────────────────────────────────────────
 
-async function callGroq(apiKey, systemPrompt, userPrompt, temperature, maxTokens) {
-  temperature = temperature !== undefined ? temperature : 0.4;
-  maxTokens = maxTokens !== undefined ? maxTokens : 1500;
+var INTERNAL_SECRET = 'chill-seo';
+// ↑ This is not a security boundary by itself — it just
+// stops random visitors from finding and hitting the
+// endpoint directly. Real protection is the portal password
+// gate that already exists in front of this.
 
-  var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+async function generateContent(systemPrompt, userPrompt, requiredSections, temperature, maxTokens) {
+  var res = await fetch('/api/generate', {
     method: 'POST',
     headers: {
-      'Authorization': 'Bearer ' + apiKey,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'x-internal-secret': INTERNAL_SECRET
     },
     body: JSON.stringify({
-      model: MODEL_CONFIG.model,
+      systemPrompt: systemPrompt,
+      userPrompt: userPrompt,
+      requiredSections: requiredSections,
       temperature: temperature,
-      max_tokens: maxTokens,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ]
+      maxTokens: maxTokens
     })
   });
-  if (!res.ok) throw new Error('API error ' + res.status);
-  var data = await res.json();
-  return data.choices[0].message.content;
-}
 
-// ── Self-Check + Reliable Call ────────────────────────────────────
-
-function withSelfCheck(systemPrompt, requiredSections) {
-  var sectionList = requiredSections.join(', ');
-  return systemPrompt + '\n\nSELF-CHECK (required before responding):\nBefore you output your final answer, verify:\n1. Does the output include ALL of these exact section headers: ' + sectionList + '?\n2. Did you follow every formatting rule given above exactly?\n3. Is every claim grounded in the actual source content provided — not invented or generic?\nIf any check fails, silently correct your response before outputting it. Do not mention this self-check process in your final answer.';
-}
-
-function validateOutput(text, requiredSections) {
-  var missing = requiredSections.filter(function(section) {
-    return text.toUpperCase().indexOf(section.toUpperCase()) === -1;
-  });
-  return { valid: missing.length === 0, missing: missing };
-}
-
-async function callGroqReliable(apiKey, systemPrompt, userPrompt, requiredSections, temperature, maxTokens) {
-  var temp = temperature !== undefined ? temperature : MODEL_CONFIG.defaultTemperature;
-  var tokens = maxTokens !== undefined ? maxTokens : MODEL_CONFIG.maxTokens;
-  var fullSystemPrompt = withSelfCheck(systemPrompt, requiredSections);
-
-  var output = await callGroq(apiKey, fullSystemPrompt, userPrompt, temp, tokens);
-  var check = validateOutput(output, requiredSections);
-
-  if (!check.valid) {
-    var retryPrompt = userPrompt + '\n\nIMPORTANT: Your previous response was missing these required sections: ' + check.missing.join(', ') + '. Regenerate the FULL response, following the exact format, with ALL required sections present this time.';
-    output = await callGroq(apiKey, fullSystemPrompt, retryPrompt, temp, tokens);
+  if (!res.ok) {
+    var err = await res.json();
+    throw new Error(err.error || 'Generation failed');
   }
 
-  return output;
+  var data = await res.json();
+  return data.result;
 }
 
 // ── Page Fetch ────────────────────────────────────────────────────
@@ -253,20 +221,6 @@ function initRadioGroup(groupEl, onChange) {
 function getRadioValue(groupEl) {
   var active = groupEl.querySelector('.radio-btn.active');
   return active ? active.dataset.value : null;
-}
-
-// ── API Key Helpers ───────────────────────────────────────────────
-
-function getApiKey(storageKey) {
-  return localStorage.getItem(storageKey) || '';
-}
-
-function saveApiKey(storageKey, value) {
-  localStorage.setItem(storageKey, value.trim());
-}
-
-function clearApiKey(storageKey) {
-  localStorage.removeItem(storageKey);
 }
 
 // ── Auth Helpers ──────────────────────────────────────────────────
