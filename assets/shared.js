@@ -46,64 +46,22 @@ async function generateContent(systemPrompt, userPrompt, requiredSections, tempe
 // ── Page Fetch ────────────────────────────────────────────────────
 
 async function fetchPageText(url) {
-  var encodedUrl = encodeURIComponent(url);
+  const res = await fetch('/api/fetch-page', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-internal-secret': INTERNAL_SECRET
+    },
+    body: JSON.stringify({ url })
+  });
 
-  function extractText(html) {
-    var div = document.createElement('div');
-    div.innerHTML = html;
-    ['script','style','nav','footer','header','aside',
-     'noscript','iframe','form','button','svg','img',
-     'figure','picture'].forEach(function(tag) {
-      div.querySelectorAll(tag).forEach(function(el) { el.remove(); });
-    });
-    var text = div.innerText || div.textContent || '';
-    text = text.replace(/\n{3,}/g, '\n\n')
-               .replace(/[ \t]{2,}/g, ' ')
-               .trim();
-    return text.length > 3500 ? text.substring(0, 3500) + '...' : text;
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Fetch failed');
   }
 
-  var proxies = [
-    async function() {
-      var ctrl = new AbortController();
-      var t = setTimeout(function() { ctrl.abort(); }, 8000);
-      try {
-        var res = await fetch('https://corsproxy.io/?' + encodedUrl, { signal: ctrl.signal });
-        clearTimeout(t);
-        if (!res.ok) throw new Error('status ' + res.status);
-        return extractText(await res.text());
-      } catch(e) { clearTimeout(t); throw e; }
-    },
-    async function() {
-      var ctrl = new AbortController();
-      var t = setTimeout(function() { ctrl.abort(); }, 8000);
-      try {
-        var res = await fetch('https://api.allorigins.win/get?url=' + encodedUrl, { signal: ctrl.signal });
-        clearTimeout(t);
-        if (!res.ok) throw new Error('status ' + res.status);
-        var d = await res.json();
-        return extractText(d.contents || '');
-      } catch(e) { clearTimeout(t); throw e; }
-    },
-    async function() {
-      var ctrl = new AbortController();
-      var t = setTimeout(function() { ctrl.abort(); }, 8000);
-      try {
-        var res = await fetch('https://api.codetabs.com/v1/proxy?quest=' + encodedUrl, { signal: ctrl.signal });
-        clearTimeout(t);
-        if (!res.ok) throw new Error('status ' + res.status);
-        return extractText(await res.text());
-      } catch(e) { clearTimeout(t); throw e; }
-    }
-  ];
-
-  for (var i = 0; i < proxies.length; i++) {
-    try {
-      var result = await proxies[i]();
-      if (result && result.length >= 100) return result;
-    } catch(e) {}
-  }
-  throw new Error('Could not fetch page. Try pasting the content manually instead.');
+  const data = await res.json();
+  return data.text;
 }
 
 // ── Toast ─────────────────────────────────────────────────────────
