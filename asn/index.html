@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ASN Workbench — Stream SEO Pros</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-  </style>
+  <title>ASN Workbench — Toolkits by Chill</title>
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
   <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-workspace="asn">
 
   <!-- Lock Screen -->
   <div class="lock-screen" id="lockScreen">
@@ -35,12 +32,14 @@
   <div class="portal-content" id="portalContent">
 
     <header class="site-header">
-      <div class="site-logo">
-        <svg width="32" height="28" viewBox="0 0 32 28" fill="none">
-          <polygon points="1,1 1,19 16,10" fill="#E04214" stroke="#E04214" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-          <polygon points="10,9 10,27 25,18" fill="#2C3A4A" stroke="#2C3A4A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <div class="site-logo" style="font-family: var(--font-display); font-size: 15px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="1.6">
+          <path d="M14.7 6.3a4 4 0 0 1 5.4 5.4l-8.5 8.5a2 2 0 0 1-2.8 0l-2.7-2.7a2 2 0 0 1 0-2.8l8.5-8.5a4 4 0 0 1 .1 0z"/>
+          <circle cx="9" cy="15" r="1"/>
         </svg>
-        Stream <span>SEO Pros</span>
+        Toolkits by Chill
+        <span style="color: var(--text-secondary); font-weight: 400;">/</span>
+        <span style="color: var(--accent); font-family: var(--font-mono); font-size: 13px; font-weight: 600;">ASN Workbench</span>
       </div>
       <a href="../index.html" style="font-size: 13px; color: var(--text-secondary); display:flex; align-items:center; gap:6px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -73,7 +72,7 @@
             </svg>
           </div>
           <div class="tool-title">Content Brief Generator</div>
-          <div class="tool-desc">Build a structured, E-E-A-T-aligned content brief with keyword strategy, heading outline, schema type, and CTA — ready to hand to a writer.</div>
+          <div class="tool-desc">Build a content brief so you don't start from a blank page.</div>
           <a href="brief.html" class="btn-primary btn-sm" style="align-self: flex-start; margin-top: 4px;">Open Tool →</a>
         </div>
 
@@ -84,7 +83,7 @@
             </svg>
           </div>
           <div class="tool-title">Page Optimizer</div>
-          <div class="tool-desc">Paste any existing page and get combined SEO + CRO recommendations, meta tag rewrites, headline fixes, and priority action items.</div>
+          <div class="tool-desc">Tell me what's wrong with a page. I'll tell you how to fix it.</div>
           <a href="optimizer.html" class="btn-primary btn-sm" style="align-self: flex-start; margin-top: 4px;">Open Tool →</a>
         </div>
 
@@ -106,7 +105,7 @@
             </svg>
           </div>
           <div class="tool-title">Ad Landing Page</div>
-          <div class="tool-desc">Generate a conversion-focused landing page that message-matches a target keyword or ad headline, with a CTA-driven structure ready to hand to a developer.</div>
+          <div class="tool-desc">Turn any page into one built to convert paid traffic — no fluff.</div>
           <a href="landing-page.html" class="btn-primary btn-sm" style="align-self: flex-start; margin-top: 4px;">Open Tool →</a>
         </div>
 
@@ -114,7 +113,8 @@
     </div>
 
     <footer class="site-footer">
-      tools.streamseopros.com · Internal use only · <a href="https://streamseopros.com" target="_blank" rel="noopener">streamseopros.com</a>
+      tools.streamseopros.com · Internal use only
+      <div style="font-size: 11px; margin-top: 4px;">A project by Chill · <a href="https://streamseopros.com" target="_blank" rel="noopener">streamseopros.com</a></div>
     </footer>
 
   </div>
@@ -123,9 +123,6 @@
 
   <script src="../assets/shared.js"></script>
   <script>
-    var PORTAL_PASS = 'asn2026';
-    var AUTH_KEY = 'asn_auth';
-
     // Auth
     function showPortal() {
       document.getElementById('lockScreen').style.display = 'none';
@@ -133,28 +130,43 @@
       pc.classList.add('visible');
     }
 
-    if (checkAuth(AUTH_KEY)) {
+    function showLoginError() {
+      var card = document.getElementById('lockCard');
+      var err = document.getElementById('lockError');
+      err.textContent = 'Incorrect password. Try again.';
+      card.classList.remove('shake');
+      void card.offsetWidth;
+      card.classList.add('shake');
+      document.getElementById('passInput').value = '';
+    }
+
+    if (localStorage.getItem('asn_session')) {
       showPortal();
     }
 
-    document.getElementById('unlockBtn').addEventListener('click', tryUnlock);
+    document.getElementById('unlockBtn').addEventListener('click', function() {
+      attemptLogin(document.getElementById('passInput').value);
+    });
     document.getElementById('passInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') tryUnlock();
+      if (e.key === 'Enter') attemptLogin(document.getElementById('passInput').value);
     });
 
-    function tryUnlock() {
-      var val = document.getElementById('passInput').value;
-      if (val === PORTAL_PASS) {
-        setAuth(AUTH_KEY);
-        showPortal();
-      } else {
-        var card = document.getElementById('lockCard');
-        var err = document.getElementById('lockError');
-        err.textContent = 'Incorrect password. Try again.';
-        card.classList.remove('shake');
-        void card.offsetWidth;
-        card.classList.add('shake');
-        document.getElementById('passInput').value = '';
+    async function attemptLogin(password) {
+      try {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: password, workspace: 'asn' })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('asn_session', data.token);
+          showPortal();
+        } else {
+          showLoginError();
+        }
+      } catch (e) {
+        showLoginError();
       }
     }
   </script>

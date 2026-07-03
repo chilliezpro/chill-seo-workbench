@@ -1,20 +1,38 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg: #0f1117;
-  --surface: #1a1d27;
-  --surface-2: #21253a;
-  --border: #2a2d3a;
-  --accent: #E04214;
-  --accent-hover: #F05A2A;
-  --text-primary: #f0f0f5;
-  --text-secondary: #8b8fa8;
+  --bg: #12181F;
+  --surface: #1C232C;
+  --surface-2: #232B35;
+  --border: #2E3742;
+  --text-primary: #EDEFF2;
+  --text-secondary: #7C8794;
+  --accent: #E8A33D;
+  --accent-hover: #F0B85C;
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
   --radius: 10px;
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'DM Mono', monospace;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+body[data-workspace="asn"] {
+  --accent: #3E8E7E;
+  --accent-hover: #4FA592;
+}
+
+body[data-workspace="ssp"] {
+  --accent: #E8A33D;
+  --accent-hover: #F0B85C;
+}
+
+.drawer-asn { --accent: #3E8E7E; --accent-hover: #4FA592; }
+.drawer-ssp { --accent: #E8A33D; --accent-hover: #F0B85C; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
 }
 
 *, *::before, *::after {
@@ -920,4 +938,33 @@ a:hover {
   font-size: 14px;
   color: var(--warning);
   margin-bottom: 20px;
+}
+
+/* ── Avatar & mascot ── */
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.mascot-footer {
+  width: 160px;
+  height: auto;
+  display: block;
+  margin: 0 auto 12px auto;
+}
+
+/* ── Blueprint background ── */
+
+.blueprint-bg {
+  position: absolute; inset: 0; opacity: 0.06;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--text-secondary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--text-secondary) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
