@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ad Landing Page — ASN Workbench</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  </style>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <svg width="32" height="28" viewBox="0 0 32 28" fill="none">
+        <polygon points="1,1 1,19 16,10" fill="#E04214" stroke="#E04214" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <polygon points="10,9 10,27 25,18" fill="#2C3A4A" stroke="#2C3A4A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+      Stream <span>SEO Pros</span>
+    </div>
+    <a href="index.html" class="back-nav" style="margin-bottom:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      ASN Workbench
+    </a>
+  </header>
+
+  <div class="container">
+
+    <div style="margin-bottom: 28px;">
+      <h1 class="page-title">Ad Landing Page</h1>
+      <p class="page-subtitle">Generate a conversion-focused landing page that message-matches a target keyword or ad headline.</p>
+    </div>
+
+    <div class="card section-gap">
+      <div class="form-stack">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Client Name</label>
+            <input type="text" class="input-field" id="clientName" placeholder="e.g. Johnson Plumbing">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location <span style="font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
+            <input type="text" class="input-field" id="location" placeholder="e.g. Austin, TX">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Client Type</label>
+          <select class="select-field" id="clientType">
+            <option value="" selected disabled>Select client type...</option>
+            <option value="regulated">Regulated / Licensed (legal, medical, financial, accounting, etc.)</option>
+            <option value="non_regulated">Non-Regulated (home services, retail, hospitality, etc.)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Target Keyword or Ad Headline</label>
+            <input type="text" class="input-field" id="targetKeyword" placeholder="e.g. Emergency Water Heater Repair Austin">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary CTA Type</label>
+            <select class="select-field" id="ctaType">
+              <option value="Call Now">Call Now</option>
+              <option value="Book Online">Book Online</option>
+              <option value="Get a Free Quote">Get a Free Quote</option>
+              <option value="Request an Estimate">Request an Estimate</option>
+              <option value="Contact Us">Contact Us</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Source URL</label>
+          <div class="url-row">
+            <input type="url" class="input-field" id="sourceUrl" placeholder="https://client.com/service-page">
+            <button class="btn-primary btn-sm" id="fetchBtn">Fetch Page</button>
+          </div>
+          <div class="status-indicator" id="fetchStatus"></div>
+        </div>
+
+        <button class="source-toggle-link" id="pasteToggle">+ Paste content manually instead</button>
+
+        <div id="pasteArea" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">Page Content</label>
+            <textarea class="textarea-field" id="manualContent" placeholder="Paste the page text here..." style="min-height:140px;"></textarea>
+          </div>
+        </div>
+
+        <!-- Preferences Panel -->
+        <div class="pref-panel">
+          <button class="pref-toggle" id="prefToggle" data-label="Landing Page Preferences">Landing Page Preferences ▾</button>
+          <div class="pref-content" id="prefContent">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Page Length</label>
+                <select class="select-field" id="pageLength">
+                  <option value="standard" selected>Standard (full narrative)</option>
+                  <option value="short">Short (single CTA focus)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Readability Target</label>
+                <select class="select-field" id="readability">
+                  <option value="simple" selected>Simple (8-year-old reading level)</option>
+                  <option value="general">General adult audience</option>
+                  <option value="professional">Professional / industry audience</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <button class="btn-primary" id="generateBtn" style="margin-bottom: 24px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+      Generate Landing Page
+    </button>
+
+    <!-- Output -->
+    <div id="outputSection" style="display:none;">
+      <div class="output-label">Generated Landing Page</div>
+      <div class="output-block" id="outputBlock">
+        <div class="output-placeholder" id="outputPlaceholder">Your landing page will appear here...</div>
+        <pre class="output-content" id="outputContent" style="display:none;"></pre>
+        <button class="copy-btn" id="copyBtn" style="display:none;">Copy</button>
+      </div>
+
+      <div class="feedback-row" id="feedbackRow">
+        <span style="font-size:13px; color:var(--text-secondary);">Was this helpful?</span>
+        <button class="feedback-btn feedback-btn-up" title="Thumbs up">👍</button>
+        <button class="feedback-btn feedback-btn-down" title="Thumbs down">👎</button>
+      </div>
+      <div class="feedback-expand" id="feedbackExpand">
+        <label class="feedback-label">What was wrong?</label>
+        <textarea class="textarea-field feedback-comment" placeholder="Describe the issue..." style="min-height:80px;"></textarea>
+        <button class="btn-ghost btn-sm feedback-send" style="align-self:flex-start;">Send Feedback</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    tools.streamseopros.com · Internal use only · <a href="https://streamseopros.com" target="_blank" rel="noopener">streamseopros.com</a>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/shared.js"></script>
+  <script>
+    initPrefPanel(
+      document.getElementById('prefToggle'),
+      document.getElementById('prefContent')
+    );
+
+    /* ── Banned words (regulated professions only — per Sam/Ed Slack directive) ── */
+    var BANNED_WORDS_REGULATED = ['best','greatest','leading','top','expert','expertise','specialist','specialize','specialized','specialization','ensure','ensuring','guarantee'];
+
+    /* ── Universal writing standards ── */
+    function getBaseRules() {
+      return '\n\nWRITING STANDARDS (apply to all copy):\n' +
+        '- Do not use em dashes.\n' +
+        '- Do not use these words: elevate, holistic, comprehensive, leverage, delve, navigate, foster, seamless, transformative, cutting-edge, unpack, ever-evolving.\n' +
+        '- Do not promise guaranteed outcomes or guaranteed results.\n' +
+        '- Open the headline and subheadline with the visitor\'s problem or need, not a statement about the company. Lead with what the visitor is going through before introducing the business as the solution.\n' +
+        '- Write short, scannable paragraphs and bullet points suited to a landing page a visitor arrived at from a paid ad, not a blog post.\n\n' +
+        'ACCURACY RULE:\n' +
+        '- Every claim, benefit, or detail must be traceable to the source content provided below (fetched or pasted from the client\'s page). Do not invent pricing, guarantees, certifications, awards, testimonials, or specific numbers that are not present in it.\n' +
+        '- If a detail is not present in the source content, write generally rather than inventing a specific fact.';
+    }
+
+    /* ── Message-match rule — the core purpose of this tool ── */
+    function getMessageMatchRule() {
+      return '\n\nMESSAGE MATCH RULE (critical):\n' +
+        '- The HEADLINE must closely mirror the exact wording of the Target Keyword / Ad Headline provided below. A visitor who clicked a paid ad for that phrase must see language on this page that confirms within one glance they are in the right place.\n' +
+        '- Do not substitute synonyms for the core phrase in the headline. Minor grammatical adjustment is fine, but the key terms must be recognizably present.';
+    }
+
+    /* ── Readability instruction ── */
+    function getReadabilityRule(readability) {
+      if (readability === 'simple') {
+        return '\n\nREADABILITY: Write at a reading level a typical 8-year-old could follow — short sentences, plain everyday words, no jargon.';
+      }
+      if (readability === 'professional') {
+        return '\n\nREADABILITY: Write in a professional, polished tone appropriate for a sophisticated or industry-specific audience, while still remaining clear and direct.';
+      }
+      return '\n\nREADABILITY: Write for a general adult audience — clear and conversational, avoiding overly technical language.';
+    }
+
+    /* ── Regulated-profession compliance block — only appended when clientType is regulated ── */
+    function getRegulatedRules() {
+      return '\n\nREGULATED-PROFESSION COMPLIANCE (this client is a licensed/regulated profession — legal, medical, financial, or similar):\n' +
+        '- Do not use these words in any copy: ' + BANNED_WORDS_REGULATED.join(', ') + '.\n' +
+        '- Instead of "ensure" or "ensuring," use phrasing like: see to it that, secure, establish, safeguard, or protect.\n' +
+        '- Instead of "expert" or "expertise," describe the provider\'s knowledge, experience, or skills rather than claiming a title.\n' +
+        '- Do not use urgency or deal-style conversion tactics — no countdown timers, limited-time offers, discounts, or artificial deadlines. These are not appropriate for regulated professions.\n' +
+        '- Do not promise a specific case outcome, medical result, or financial result.';
+    }
+
+    /* ── CTA placement instruction — embedded in the above-the-fold CTA section ── */
+    var CTA_PLACEMENT_RULE = 'The same CTA text must appear in exactly 3 places on the page: immediately after the headline, immediately after Trust Signals, and at the closing. Do not introduce a second, different call to action anywhere on the page. State this placement explicitly in your output.';
+
+    /* ── Publishing note — embedded in the closing/final section ── */
+    var PUBLISHING_NOTE = 'PUBLISHING NOTE: Recommend this page be published at a standalone URL separate from the main site (e.g. site.com/lp/[service-name]), set to noindex, with no main site navigation included — the goal is zero distractions between arrival and conversion.';
+
+    /* ── Format block, keyed to page length. Trust Signals and Objection Handling are always included. ── */
+    function getFormatBlock(pageLength) {
+      var trustBlock = '\n\nTRUST SIGNALS\n[3-4 short bullet points naming credibility signals literally present in the source content — years in business, certifications, service area, licensing, real guarantees actually offered. Do not invent any.]';
+      var objectionBlock = '\n\nOBJECTION HANDLING\n[Identify 2-3 real hesitations a visitor in this specific situation would have before converting. Address each directly and briefly. Do not use generic objections — these must be specific to the service or situation described in the fetched source content. Ground every objection and response in what is actually in the source content — do not invent details.]';
+
+      if (pageLength === 'short') {
+        return 'Generate a short, single-CTA-focused ad landing page in this exact format:\n\n' +
+          'HEADLINE (H1)\n[Must message-match the Target Keyword / Ad Headline — see MESSAGE MATCH RULE]\n\n' +
+          'SUBHEADLINE\n[1 sentence expanding the promise — states the specific benefit or offer]\n\n' +
+          'ABOVE-THE-FOLD CTA\n[Button/link text built around the selected Primary CTA Type]\n' + CTA_PLACEMENT_RULE + '\n\n' +
+          'WHY CHOOSE US\n[3-4 bullet points, benefit-focused not feature-focused, grounded only in the source content]' +
+          trustBlock +
+          objectionBlock +
+          '\n\nFINAL CTA SECTION\n[1-2 closing sentences plus the CTA button text repeated]\n' + PUBLISHING_NOTE + '\n\n' +
+          'MESSAGE MATCH CHECK\n[1-2 sentences explicitly confirming the headline echoes the Target Keyword / Ad Headline]\n\n' +
+          'Do not use markdown bold or heading symbols.';
+      }
+
+      // standard
+      return 'Generate a complete, conversion-focused ad landing page in this exact format:\n\n' +
+        'HEADLINE (H1)\n[Must message-match the Target Keyword / Ad Headline — see MESSAGE MATCH RULE]\n\n' +
+        'SUBHEADLINE\n[1 sentence expanding the promise — states the specific benefit or offer]\n\n' +
+        'ABOVE-THE-FOLD CTA\n[Button/link text built around the selected Primary CTA Type]\n' + CTA_PLACEMENT_RULE + '\n\n' +
+        'PROBLEM\n[2-3 sentences naming the visitor\'s problem or need in their own words, before pitching the business]\n\n' +
+        'SOLUTION\n[2-4 sentences positioning the business as the answer, referencing only facts from the source content]\n\n' +
+        'KEY BENEFITS\n[3-5 bullet points, each one benefit-focused not feature-focused]' +
+        trustBlock +
+        objectionBlock +
+        '\n\nFINAL CTA SECTION\n[2-3 closing sentences plus the CTA button text repeated]\n' + PUBLISHING_NOTE + '\n\n' +
+        'MESSAGE MATCH CHECK\n[1-2 sentences explicitly confirming the headline echoes the Target Keyword / Ad Headline]\n\n' +
+        'Do not use markdown bold or heading symbols.';
+    }
+
+    function buildSystemPrompt(pageLength, readability, clientType) {
+      var format = getFormatBlock(pageLength);
+      var prompt = 'You are a senior direct-response copywriter specializing in PPC and paid-ad landing pages. ' + format;
+      prompt += getMessageMatchRule();
+      prompt += getReadabilityRule(readability);
+      prompt += getBaseRules();
+      if (clientType === 'regulated') {
+        prompt += getRegulatedRules();
+      }
+      return prompt;
+    }
+
+    /* ── Post-generation banned-word safety net (regulated clients only) ── */
+    function scanForBannedWords(text) {
+      var found = [];
+      BANNED_WORDS_REGULATED.forEach(function(word) {
+        var re = new RegExp('\\b' + word + '\\b', 'i');
+        if (re.test(text)) found.push(word);
+      });
+      return found;
+    }
+
+    // Paste toggle
+    var pageText = '';
+    var pasteVisible = false;
+    document.getElementById('pasteToggle').addEventListener('click', function() {
+      pasteVisible = !pasteVisible;
+      document.getElementById('pasteArea').style.display = pasteVisible ? '' : 'none';
+      this.textContent = pasteVisible ? '− Hide manual paste' : '+ Paste content manually instead';
+    });
+
+    // Fetch
+    document.getElementById('fetchBtn').addEventListener('click', async function() {
+      var url = document.getElementById('sourceUrl').value.trim();
+      if (!url) { showToast('Enter a URL first.'); return; }
+      var status = document.getElementById('fetchStatus');
+      status.className = 'status-indicator';
+      status.textContent = 'Fetching...';
+      this.disabled = true;
+      try {
+        var text = await fetchPageText(url);
+        pageText = text;
+        var preview = text.substring(0, 60).replace(/\n/g, ' ');
+        status.className = 'status-indicator success';
+        status.textContent = 'Page loaded: ' + preview + (text.length > 60 ? '...' : '');
+        showToast('Page fetched successfully.');
+      } catch(e) {
+        status.className = 'status-indicator error';
+        status.textContent = 'Fetch failed: ' + e.message;
+        pageText = '';
+      }
+      this.disabled = false;
+    });
+
+    document.getElementById('generateBtn').addEventListener('click', generateLandingPage);
+
+    async function generateLandingPage() {
+      var clientName = document.getElementById('clientName').value.trim();
+      var location = document.getElementById('location').value.trim();
+      var clientType = document.getElementById('clientType').value;
+      var targetKeyword = document.getElementById('targetKeyword').value.trim();
+      var ctaSelect = document.getElementById('ctaType');
+      var ctaType = ctaSelect.value;
+      var manual = document.getElementById('manualContent').value.trim();
+      var content = manual || pageText;
+      var pageLengthSelect = document.getElementById('pageLength');
+      var pageLength = pageLengthSelect.value;
+      var pageLengthLabel = pageLengthSelect.options[pageLengthSelect.selectedIndex].text;
+      var readabilitySelect = document.getElementById('readability');
+      var readability = readabilitySelect.value;
+      var readabilityLabel = readabilitySelect.options[readabilitySelect.selectedIndex].text;
+
+      if (!clientType) {
+        showToast('Select client type before generating.');
+        return;
+      }
+      if (!targetKeyword) {
+        showToast('Please enter the target keyword or ad headline.');
+        return;
+      }
+      if (!content) {
+        showToast('Fetch a page or paste content first.');
+        return;
+      }
+
+      var systemPrompt = buildSystemPrompt(pageLength, readability, clientType);
+      var userPrompt = 'Client: ' + (clientName || 'Not specified') + '\nClient Type: ' + (clientType === 'regulated' ? 'Regulated / Licensed' : 'Non-Regulated') + '\nLocation: ' + (location || 'Not specified') + '\nTarget Keyword / Ad Headline: ' + targetKeyword + '\nPrimary CTA Type: ' + ctaType + '\nPage Length: ' + pageLengthLabel + '\nReadability Target: ' + readabilityLabel + '\n\nSOURCE CONTENT:\n' + content;
+
+      var btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+      var outputSection = document.getElementById('outputSection');
+      var outputPlaceholder = document.getElementById('outputPlaceholder');
+      var outputContent = document.getElementById('outputContent');
+      var copyBtn = document.getElementById('copyBtn');
+      var existingWarning = document.getElementById('regulatedWarningBanner');
+      if (existingWarning) existingWarning.remove();
+
+      outputSection.style.display = '';
+      outputPlaceholder.style.display = '';
+      outputPlaceholder.style.color = 'var(--text-secondary)';
+      outputPlaceholder.textContent = 'Generating… this may take a moment for quality checks';
+      outputContent.style.display = 'none';
+      copyBtn.style.display = 'none';
+      outputContent.textContent = '';
+
+      var requiredSections = ['HEADLINE', 'SUBHEADLINE', 'ABOVE-THE-FOLD CTA', 'TRUST SIGNALS', 'OBJECTION HANDLING', 'FINAL CTA SECTION', 'MESSAGE MATCH CHECK'];
+      if (pageLength === 'short') {
+        requiredSections.push('WHY CHOOSE US');
+      } else {
+        requiredSections.push('PROBLEM', 'SOLUTION', 'KEY BENEFITS');
+      }
+
+      try {
+        var result = await generateContent(systemPrompt, userPrompt, requiredSections, 0.3, 2200);
+        var cleaned = cleanOutput(result);
+        outputContent.textContent = cleaned;
+        outputPlaceholder.style.display = 'none';
+        outputContent.style.display = '';
+        copyBtn.style.display = '';
+
+        var bannedFound = (clientType === 'regulated') ? scanForBannedWords(cleaned) : [];
+        if (bannedFound.length > 0) {
+          var warningHtml = '<div class="warning-banner" id="regulatedWarningBanner" style="margin-bottom:12px;">' +
+            '⚠ This output may contain restricted terms for regulated-profession clients: <strong>' + bannedFound.join(', ') + '</strong>. Review before sending to client.</div>';
+          document.getElementById('outputBlock').insertAdjacentHTML('beforebegin', warningHtml);
+        }
+      } catch(e) {
+        outputPlaceholder.textContent = 'Error: ' + e.message;
+        outputPlaceholder.style.color = 'var(--danger)';
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Generate Landing Page';
+
+      initCopyBtn(copyBtn, function() { return outputContent.textContent; });
+    }
+
+    initFeedback(
+      document.getElementById('outputSection'),
+      'asn_feedback',
+      'Ad Landing Page',
+      function() { return document.getElementById('outputContent').textContent; }
+    );
+  </script>
+</body>
+</html>
